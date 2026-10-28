@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="관리자(교감) 연수 AI·SW 트렌드로 읽는 디지털 리더십(2026.10.29.) — Gemini Notebook으로 만드는 인사·복무 규정 챗봇, 교직원 안내 인포그래픽, 프롬프트와 실습 자료">
+<meta property="og:title" content="AI·SW 트렌드로 읽는 디지털 리더십 — 연수 아카이브">
+<meta property="og:image" content="https://hongdonedu.github.io/digital-leadership/art/cover.webp">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>디지털 리더십 연수 아카이브</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;900&family=Gowun+Dodum&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: 노트북LM의 '출처 패널'처럼 왼쪽 세로 시간표(단계·목표) + 오른쪽 노트 페이지 */
+:root{
+  --ink:#14213d;          /* 남색 — 사이드바·제목 */
+  --ink2:#1f4e8c;         /* 청남색 — 강조 */
+  --sun:#e8b44c;          /* 금색 — 하이라이트 */
+  --mint:#159a8c;         /* 청록 — 완료·초록 표시 */
+  --coral:#e5484d;        /* 빨강 — 캡처 번호 */
+  --paper:#f4f6fa;        /* 페이지 바탕 */
+  --card:#ffffff;
+  --line:#dfe5ef;
+  --text:#18233a;
+  --muted:#5f6b80;
+  --chip:#e9eff8;
+  --chipText:#1f4e8c;
+  --promptBg:#f3f6fb;
+  --side:#0f1a33; --sideText:#eef2f9; --sideMuted:#a9b6cc; --sideActive:#1f3a66;
+  --shadow:0 6px 22px rgba(15,26,51,.10);
+  --fDisplay:'Noto Serif KR','Noto Sans KR',serif;
+  --fBody:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;
+  --fSoft:'Gowun Dodum','Noto Sans KR',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0d1424; --card:#141e33; --line:#26344f; --text:#e8edf6; --muted:#9aa8c0; --chip:#1c2a45; --chipText:#a9c4ef;
+  --promptBg:#17233b; --side:#080e1c; --sideActive:#1f3a66; --shadow:0 6px 22px rgba(0,0,0,.35); --ink:#e8d39a; --ink2:#8fb4ea; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0d1424; --card:#141e33; --line:#26344f; --text:#e8edf6; --muted:#9aa8c0; --chip:#1c2a45; --chipText:#a9c4ef;
+  --promptBg:#17233b; --side:#080e1c; --sideActive:#1f3a66; --shadow:0 6px 22px rgba(0,0,0,.35); --ink:#e8d39a; --ink2:#8fb4ea; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--paper);color:var(--text);font-family:var(--fBody);font-size:15.5px;line-height:1.65;word-break:keep-all}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--side)}
+a{color:var(--ink2)}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px;border-radius:6px}
+.app{display:grid;grid-template-columns:300px minmax(0,1fr);min-height:100%}
+/* ---------- sidebar ---------- */
+.side{background:var(--side);color:var(--sideText);position:sticky;top:env(safe-area-inset-top,0px);height:calc(100vh - env(safe-area-inset-top,0px));overflow-y:auto;padding-block:20px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:16px;scrollbar-width:thin}
+.brand{display:flex;gap:12px;align-items:center;text-decoration:none;color:inherit;padding:4px 6px 14px}
+.brand img{width:52px;height:auto;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35))}
+.brand b{font-family:var(--fDisplay);font-weight:900;font-size:19px;line-height:1.15;display:block}
+.brand small{color:var(--sideMuted);font-size:12.5px}
+.navhome{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:12px;color:var(--sideText);text-decoration:none;font-weight:700;font-size:14.5px}
+.navhome[aria-current="page"],.navhome:hover{background:var(--sideActive)}
+.partlab{margin:18px 6px 6px;font-size:11.5px;letter-spacing:.1em;color:var(--sun);font-weight:700}
+.stepnav{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 12px;border-radius:12px;text-decoration:none;color:var(--sideText)}
+.stepnav:hover{background:rgba(255,255,255,.07)}
+.stepnav[aria-current="page"]{background:var(--sideActive);box-shadow:inset 3px 0 0 var(--sun)}
+.stepnav .n{display:none;width:20px;height:20px;border-radius:50%;place-items:center;font-size:11px;font-weight:900;background:var(--mint);color:#fff}
+.stepnav.done .n{display:grid}
+.stepnav .t{font-weight:700;font-size:14.5px;line-height:1.3}
+.sidelinks{margin-top:18px;border-top:1px solid rgba(255,255,255,.12);padding-top:12px;display:grid;gap:2px}
+.sidelinks a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;color:var(--sideText);text-decoration:none;font-size:14px}
+.sidelinks a:hover,.sidelinks a[aria-current="page"]{background:var(--sideActive)}
+.sidelinks img{width:28px;height:28px;object-fit:contain}
+.prog{margin:16px 6px 0;font-size:12px;color:var(--sideMuted)}
+.prog .bar{height:6px;border-radius:9px;background:rgba(255,255,255,.12);margin-top:6px;overflow:hidden}
+.prog .bar i{display:block;height:100%;background:var(--sun);width:0;transition:width .4s}
+/* ---------- topbar (mobile) ---------- */
+.top{display:none}
+/* ---------- main ---------- */
+main{min-width:0;padding-block:28px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1060px;margin:0 auto}
+h1,h2,h3{text-wrap:balance;line-height:1.3;margin:0}
+h2{font-family:var(--fDisplay);font-weight:900;font-size:25px;color:var(--ink);letter-spacing:-.01em}
+h3{font-size:17px;font-weight:900}
+.eyebrow{font-size:12px;letter-spacing:.14em;font-weight:700;color:var(--ink2)}
+.sec{margin-top:34px;display:grid;gap:14px}
+.sechead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.sechead p{margin:0;color:var(--muted);font-size:14px}
+.cite{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:var(--chipText);background:var(--chip);border-radius:999px;padding:2px 10px;white-space:nowrap}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12.5px;font-weight:700;border-radius:999px;padding:3px 11px;background:var(--chip);color:var(--chipText)}
+.chip.sun{background:var(--sun);color:#2a1d00}
+/* hero */
+.hero{position:relative;border-radius:26px;overflow:hidden;background:#0f1a33;color:#fff;box-shadow:var(--shadow);aspect-ratio:16/8.2;max-width:100%}
+.hero img{position:absolute;top:0;right:0;bottom:0;left:auto;width:64%;height:100%;object-fit:cover;object-position:28% center}
+.hero .shade{position:absolute;inset:0;background:linear-gradient(90deg,#0f1a33 0%,#0f1a33 36%,rgba(15,26,51,.55) 46%,rgba(15,26,51,0) 60%)}
+.hero .hcopy{position:relative;padding:clamp(20px,4vw,48px);max-width:560px;display:grid;gap:14px;height:100%;align-content:center}
+.hero .tag{justify-self:start;background:#fff;color:#14213d;font-weight:900;font-size:13px;border-radius:999px;padding:5px 14px}
+.hero h1{font-family:var(--fDisplay);font-weight:900;font-size:clamp(28px,4.2vw,48px);line-height:1.22;letter-spacing:-.01em;text-shadow:0 4px 18px rgba(0,0,0,.35)}
+.hero h1 em{font-style:normal;color:var(--sun)}
+.hero p{margin:0;color:#dfe6f3;font-size:15px}
+.hero .who{font-weight:700;color:#fff}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:10px 18px;font-weight:900;font-size:14.5px;text-decoration:none;background:var(--sun);color:#2a1d00}
+.btn.ghost{background:rgba(255,255,255,.14);color:#fff;border:1.5px solid rgba(255,255,255,.4)}
+.btn.line{background:var(--card);color:var(--ink2);border:1.5px solid var(--line)}
+.btn.small{padding:6px 13px;font-size:13px}
+/* timeline */
+.timeline{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;display:grid;gap:10px}
+.tl{display:flex;height:46px;border-radius:12px;overflow:hidden;gap:3px}
+.tl a{display:grid;place-items:center;text-decoration:none;color:#fff;font-weight:900;font-size:13px;min-width:0;padding:0 4px;text-align:center;line-height:1.15}
+.tl a small{display:block;font-weight:500;font-size:10.5px;opacity:.85}
+.tlleg{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+/* part cards */
+.parts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.part{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;display:flex;flex-direction:column}
+.part .pic{aspect-ratio:16/9;background:#0f1a33;overflow:hidden}
+.part .pic img{width:100%;height:100%;object-fit:cover;object-position:68% 50%}
+.part .body{padding:14px 16px 16px;display:grid;gap:8px;align-content:start}
+.part .num{font-family:var(--fDisplay);font-weight:700;font-size:13px;color:var(--ink2);letter-spacing:.06em}
+.part h3{font-size:16px}
+.part ol{margin:0;padding:0;list-style:none;display:grid;gap:4px}
+.part li a{display:flex;gap:8px;text-decoration:none;color:var(--text);font-size:13.5px;align-items:baseline}
+.part li a b{font-family:var(--fDisplay);font-weight:900;color:var(--ink2);min-width:20px}
+/* three panels */
+.panels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;display:grid;gap:6px}
+.panel b{font-family:var(--fDisplay);font-weight:900;font-size:18px;color:var(--ink)}
+.panel p{margin:0;font-size:14px;color:var(--muted)}
+.panel .where{font-size:12px;font-weight:700;color:var(--chipText)}
+.bookbox{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px}
+.bookbox img{width:64px}
+.bookbox p{margin:0;font-size:14px;color:var(--muted)}
+/* step header */
+.stephead{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:0;background:var(--card);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:var(--shadow)}
+.stephead .l{padding:24px 26px;display:grid;gap:12px;align-content:center}
+.stephead .r{position:relative;background:#0f1a33;min-height:200px}
+.stephead .r img.art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:70% 50%;opacity:.95}
+.stephead .r img.ico{position:absolute;right:14px;bottom:10px;width:110px;filter:drop-shadow(0 10px 16px rgba(0,0,0,.35))}
+.snum{display:flex;align-items:center;gap:12px}
+.snum b{font-family:var(--fDisplay);font-weight:900;font-size:14px;color:#fff;background:var(--ink2);border-radius:999px;padding:4px 14px}
+.snum span{color:var(--muted);font-size:13px;font-weight:700}
+.stephead h1{font-family:var(--fDisplay);font-weight:900;font-size:clamp(22px,2.7vw,31px);color:var(--ink);letter-spacing:-.01em}
+.goal{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;background:var(--promptBg);border-radius:14px;padding:12px 14px}
+.goal i{font-style:normal;font-weight:900;color:#2a1d00;background:var(--sun);border-radius:8px;padding:2px 8px;font-size:12.5px;white-space:nowrap}
+.goal p{margin:0;font-weight:700}
+.intro{margin:0;max-width:72ch;font-family:var(--fSoft);font-size:16.5px;line-height:1.8}
+/* files */
+.files{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.file{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;text-decoration:none;color:var(--text)}
+.file:hover{border-color:var(--ink2)}
+.file .k{width:44px;height:52px;border-radius:8px;display:grid;place-items:center;font-size:11px;font-weight:900;color:#fff;background:var(--coral)}
+.file .k.png{background:var(--mint)} .file .k.txt{background:#7a7598} .file .k.hwp,.file .k.hwpx{background:#2b8fd6} .file .k.jpg{background:#d99a00}
+.file b{display:block;font-size:14px;line-height:1.35}
+.file small{color:var(--muted);font-size:12px}
+.filebig{grid-template-columns:52px minmax(0,1fr) auto}
+.filebig .dl{font-size:13px;font-weight:900;color:var(--ink2);white-space:nowrap}
+/* todo */
+.todo{counter-reset:t;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.todo li{counter-increment:t;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px 12px 48px;position:relative;font-weight:700;font-size:14px;line-height:1.45}
+.todo li::before{content:counter(t);position:absolute;left:12px;top:11px;width:26px;height:26px;border-radius:50%;background:var(--ink2);color:#fff;display:grid;place-items:center;font-family:var(--fBody);font-weight:900;font-size:13px}
+/* captures */
+.caps{display:grid;gap:18px}
+.cap{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(0,1fr);gap:16px;align-items:start;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px}
+.shot{position:relative;border-radius:10px;overflow:hidden;border:1px solid var(--line);cursor:zoom-in;background:#fff}
+.shot img{display:block;width:100%;height:auto}
+.mk{position:absolute;border:3px solid var(--coral);border-radius:6px;pointer-events:none}
+.mk.green{border-color:var(--mint)}
+.mk b{position:absolute;left:-13px;top:-13px;width:24px;height:24px;border-radius:50%;background:var(--coral);color:#fff;display:grid;place-items:center;font-size:12.5px;font-weight:900;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.mk.green b{background:var(--mint)}
+.capinfo{display:grid;gap:10px;align-content:start;padding:4px 2px}
+.capinfo h3{font-size:16px}
+.capinfo ol{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.capinfo li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:9px;font-size:14px;line-height:1.5}
+.capinfo li b{width:24px;height:24px;border-radius:50%;background:var(--coral);color:#fff;display:grid;place-items:center;font-size:12.5px}
+.capinfo li.green b{background:var(--mint)}
+/* formula */
+.formula{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.fx{border-radius:16px;padding:14px 16px;display:grid;gap:4px;background:var(--card);border:1px solid var(--line);border-top:6px solid var(--c)}
+.fx b{font-family:var(--fDisplay);font-weight:900;font-size:20px;color:var(--c)}
+.fx span{font-size:13px;color:var(--muted)}
+.fx em{font-style:normal;font-size:13.5px;font-weight:700}
+/* prompts */
+.prompts{display:grid;gap:14px}
+.prompt{background:var(--promptBg);border:1.5px solid color-mix(in srgb,var(--ink2) 35%,transparent);border-radius:18px;padding:16px 18px;display:grid;gap:10px}
+.phead{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.pid{font-family:var(--fBody);font-weight:900;font-size:13px;color:#fff;background:var(--ink2);border-radius:8px;padding:2px 9px}
+.phead h3{font-size:15.5px;flex:1 1 220px;min-width:0}
+.pwhere{font-size:13px;color:var(--muted)}
+.pwhere b{color:var(--text)}
+.ptext{margin:0;white-space:pre-wrap;font-family:var(--fBody);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:14.5px;line-height:1.75;max-height:none}
+.pfoot{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.copy{border:0;border-radius:999px;background:var(--ink2);color:#fff;font-weight:900;font-size:13.5px;padding:8px 16px;display:inline-flex;gap:6px;align-items:center}
+.copy.ok{background:var(--mint)}
+/* results */
+.results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.results.wide{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.res{border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--card);cursor:zoom-in;padding:0}
+.res img{display:block;width:100%;height:auto}
+.res figcaption{font-size:12.5px;padding:8px 10px;color:var(--muted)}
+/* tips */
+.tips{display:grid;gap:8px}
+.tip{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;background:var(--card);border:1px dashed color-mix(in srgb,var(--ink2) 45%,transparent);border-radius:14px;padding:12px 14px;font-size:14px}
+.tip b{font-family:var(--fDisplay);font-weight:900;color:var(--ink2);font-size:14px}
+.challenge{display:grid;grid-template-columns:72px minmax(0,1fr);gap:14px;align-items:center;background:linear-gradient(120deg,#0f1a33,#1f4e8c);color:#fff;border-radius:18px;padding:14px 18px}
+.challenge img{width:72px}
+.challenge b{font-family:var(--fDisplay);font-weight:900;font-size:17px;color:var(--sun);display:block}
+.challenge p{margin:0;font-size:14.5px}
+/* checks */
+.checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.check{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;cursor:pointer;text-align:left;color:var(--text)}
+.check .box{width:28px;height:28px;border-radius:8px;border:2.5px solid var(--ink2);display:grid;place-items:center;color:#fff;font-weight:900}
+.check.on .box{background:var(--mint);border-color:var(--mint)}
+.check b{display:block;font-size:15.5px}
+.check span{font-size:13.5px;color:var(--muted)}
+/* footer nav */
+.pager{display:flex;justify-content:space-between;gap:10px;margin-top:40px;flex-wrap:wrap}
+.pager a{flex:1 1 240px;text-decoration:none;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 18px;color:var(--text);display:grid;gap:2px}
+.pager a small{color:var(--muted);font-size:12px}
+.pager a b{font-size:15px}
+.pager a.next{text-align:right}
+.donebtn{border:2px solid var(--mint);background:transparent;color:var(--mint);font-weight:900;border-radius:999px;padding:9px 18px}
+.donebtn.on{background:var(--mint);color:#fff}
+/* prompt library */
+.search{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.search input{flex:1 1 260px;min-width:0;border:1.5px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:10px 16px;font:inherit}
+.filter{border:1.5px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700}
+.filter[aria-pressed="true"]{background:var(--ink2);border-color:var(--ink2);color:#fff}
+.empty{color:var(--muted);text-align:center;padding:30px}
+/* character pipeline */
+.flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.fl{position:relative;background:var(--card);border:1px solid var(--line);border-radius:18px;display:flex;flex-direction:column}
+.fl:not(:last-child)::after{content:'→';position:absolute;right:-16px;top:70px;font-family:var(--fDisplay);font-size:22px;color:var(--ink2);z-index:2}
+.fl .pic{aspect-ratio:1/1;background:#fff8e6;border-radius:18px 18px 0 0;display:grid;place-items:center;overflow:hidden;cursor:zoom-in}
+.fl .pic{position:relative}
+.fl .pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block}
+.fl .pic.cover img{width:100%;height:100%;object-fit:cover}
+.fl .b{padding:10px 12px 12px;display:grid;gap:4px}
+.fl .b i{font-style:normal;font-family:var(--fDisplay);font-size:14px;color:var(--ink2)}
+.fl .b b{font-size:15px}
+.fl .b span{font-size:13px;color:var(--muted)}
+.fl .pin{margin-top:4px;grid-column:auto}
+.fl .pin summary{padding:7px 10px;font-size:13px}
+.fl .pin summary::after{content:'▾'}
+.fl .pin[open] summary::after{content:'▴'}
+.cutter{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px}
+.cutter img{width:100%;border-radius:12px;display:block}
+.cutter b{font-family:var(--fDisplay);font-weight:900;font-size:19px;color:var(--ink)}
+.cutter p{margin:4px 0 10px;font-size:14px;color:var(--muted)}
+@media (max-width:900px){.flow{grid-template-columns:repeat(2,minmax(0,1fr))}.fl:nth-child(2)::after{display:none}.cutter{grid-template-columns:1fr}}
+/* inline prompt under a capture step */
+.pin{grid-column:2;margin-top:6px;background:var(--promptBg);border:1.5px solid color-mix(in srgb,var(--ink2) 35%,transparent);border-radius:12px}
+.capinfo .pin.solo{margin-left:33px}
+.pin summary{cursor:pointer;list-style:none;padding:7px 12px;font-weight:900;font-size:13.5px;color:var(--ink2);display:flex;align-items:center;gap:8px}
+.pin summary::-webkit-details-marker{display:none}
+.pin summary .pid{font-size:13px}
+.pin summary::after{content:'펼치기 ▾';margin-left:auto;font-size:12px;color:var(--muted);font-weight:700}
+.pin[open] summary::after{content:'접기 ▴'}
+.pin .pset{padding:0 12px 6px;font-size:12px;color:var(--muted)}
+.pin .ptext{margin:0 10px;font-size:13.5px;padding:10px 12px;line-height:1.7}
+.pin .pfoot{padding:8px 10px 10px;display:flex;justify-content:flex-end}
+/* live links to NotebookLM */
+.livebox{background:var(--promptBg);border:1.5px solid color-mix(in srgb,var(--ink2) 30%,transparent);border-radius:18px;padding:14px 16px;display:grid;gap:10px}
+.livebox .lh{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
+.livebox .lh b{font-family:var(--fDisplay);font-weight:900;font-size:17px;color:var(--ink)}
+.livebox .lh span{font-size:12.5px;color:var(--muted)}
+.live{display:flex;flex-wrap:wrap;gap:8px}
+.lv{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:8px 15px;background:var(--card);border:1.5px solid color-mix(in srgb,var(--ink2) 40%,transparent);color:var(--ink2);font-weight:900;font-size:14px;text-decoration:none}
+.lv:hover{background:var(--ink2);color:#fff}
+.nbs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.nb{display:grid;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;text-decoration:none;color:var(--text)}
+.nb:hover{border-color:var(--ink2)}
+.nb b{font-size:15.5px}
+.nb span{font-size:13px;color:var(--muted)}
+.nb em{font-style:normal;font-size:13px;font-weight:900;color:var(--ink2)}
+.res figcaption a.go{display:inline-block;margin-top:4px;font-weight:900;text-decoration:none}
+/* trend keywords */
+.trend{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.tr{display:grid;grid-template-columns:76px minmax(0,1fr);gap:12px;align-items:start;background:var(--card);border:1px solid var(--line);border-top:5px solid var(--sun);border-radius:18px;padding:16px}
+.tr img{width:76px;height:auto}
+.trn{font-size:11.5px;font-weight:900;letter-spacing:.08em;color:var(--ink2)}
+.tr h3{font-family:var(--fDisplay);font-weight:900;font-size:19px;color:var(--ink);margin:2px 0 8px}
+.tr h3 small{display:block;font-family:var(--fBody);font-size:12px;font-weight:700;color:var(--muted)}
+.tr p{margin:0 0 6px;font-size:13.5px;line-height:1.55}
+.tr p b{display:block;font-size:11.5px;color:var(--mint);font-weight:900}
+.tline{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:var(--card)}
+.tline li{padding:12px 14px;display:grid;gap:2px;position:relative;border-left:1px solid var(--line)}
+.tline li:first-child{border-left:0}
+.tline li:last-child{background:linear-gradient(135deg,#14213d,#1f4e8c);color:#fff}
+.tline .ty{font-size:12px;font-weight:900;color:var(--sun);font-variant-numeric:tabular-nums}
+.tline b{font-size:14.5px}
+.tline span:not(.ty){font-size:12.5px;color:var(--muted)}
+.tline li:last-child span:not(.ty){color:#dce5f3}
+/* three faces */
+.faces{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.face{background:linear-gradient(160deg,#14213d,#1d3a6a);color:#fff;border-radius:20px;padding:18px;display:grid;gap:6px;justify-items:start;position:relative;overflow:hidden}
+.face img{width:84px;height:auto;filter:drop-shadow(0 8px 12px rgba(0,0,0,.35))}
+.face .fn{font-size:11.5px;font-weight:900;letter-spacing:.08em;color:var(--sun)}
+.face b{font-family:var(--fDisplay);font-weight:900;font-size:19px}
+.face p{margin:0;font-size:13.5px;color:#d9e2f1;line-height:1.6}
+/* scenarios */
+.scen{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.sc{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:6px;position:relative}
+.sc img{position:absolute;right:10px;top:8px;width:58px}
+.sc .sck{font-family:var(--fDisplay);font-weight:900;color:#fff;background:var(--ink2);width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:15px}
+.sc b{font-size:16px;padding-right:56px}
+.sc p{margin:0;font-size:13.5px;color:var(--muted)}
+.sc .scp{display:grid;gap:6px;margin-top:auto;padding-top:6px}
+.sc .pin{grid-column:auto;margin:0}
+/* review (typo check) */
+.review{background:var(--card);border:1.5px dashed var(--coral);border-radius:18px;padding:16px 18px;display:grid;gap:10px}
+.review p{margin:0;font-size:14px}
+.review ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.review li{display:flex;align-items:center;gap:6px;background:var(--promptBg);border-radius:999px;padding:5px 12px;font-size:13.5px}
+.review s{color:var(--coral);text-decoration-thickness:2px}
+.review li span{color:var(--muted)}
+.review li b{color:var(--mint)}
+/* discussion */
+.discuss{background:linear-gradient(120deg,#0f1a33,#1f4e8c);color:#fff;border-radius:20px;padding:20px 22px;display:grid;gap:10px}
+.discuss .dl{justify-self:start;background:var(--sun);color:#2a1d00;font-weight:900;font-size:12.5px;border-radius:999px;padding:3px 12px}
+.discuss p{margin:0;font-family:var(--fDisplay);font-weight:700;font-size:clamp(17px,2vw,21px);line-height:1.55}
+.refs{margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;display:grid;gap:3px}
+.results.info2{grid-template-columns:minmax(0,.62fr) minmax(0,1.38fr);align-items:start}
+.nbs.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:900px){.trend,.faces,.scen{grid-template-columns:1fr}.tline{grid-template-columns:repeat(2,minmax(0,1fr))}.tline li:nth-child(3){border-left:0}.results.info2{grid-template-columns:1fr}}
+@media (max-width:560px){.nbs.two{grid-template-columns:1fr}.tline{grid-template-columns:1fr}.tline li{border-left:0;border-top:1px solid var(--line)}}
+/* lightbox */
+.lb{position:fixed;inset:0;z-index:80;background:rgba(8,14,28,.9);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.lb .in{position:relative;max-width:min(1400px,100%);max-height:100%;overflow:auto}
+.lb img{display:block;max-width:100%;height:auto;border-radius:10px}
+.lb .x{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));right:calc(12px + env(safe-area-inset-right,0px));border:0;border-radius:999px;background:#fff;color:#14213d;font-weight:900;padding:8px 14px}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink2);color:#fff;font-weight:700;border-radius:999px;padding:10px 18px;z-index:90;box-shadow:var(--shadow)}
+@media (max-width:1100px){.parts{grid-template-columns:repeat(2,minmax(0,1fr))}.results{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  .side{position:fixed;inset:0 auto 0 0;width:min(320px,88vw);height:100%;z-index:70;transform:translateX(-102%);transition:transform .25s;padding-top:calc(20px + env(safe-area-inset-top,0px))}
+  .side.open{transform:none;box-shadow:0 0 0 100vmax rgba(6,10,22,.55)}
+  .top{display:flex;align-items:center;gap:10px;position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--side);color:#fff;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .top button{border:0;background:rgba(255,255,255,.14);color:#fff;border-radius:10px;padding:6px 12px;font-weight:900}
+  .top b{font-family:var(--fDisplay);font-weight:900;font-size:16px}
+  .top img{width:30px}
+  .cap{grid-template-columns:1fr}
+  .stephead{grid-template-columns:1fr}.stephead .r{min-height:150px;order:-1}
+  .panels,.formula{grid-template-columns:1fr}
+  .hero{aspect-ratio:auto}.hero img{width:100%;object-position:62% center}.hero .shade{background:linear-gradient(180deg,rgba(12,22,48,.35),rgba(12,22,48,.94) 62%)}.hero .hcopy{padding-top:180px}
+}
+@media (max-width:560px){.parts,.checks,.nbs{grid-template-columns:1fr}.results{grid-template-columns:repeat(2,minmax(0,1fr))}body{font-size:15px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <div class="top"><button id="menuBtn" aria-label="단계 목록 열기">☰ 단계</button><img src="art/noti_wave.png" alt=""><b>디지털 리더십 연수</b></div>
+  <aside class="side" id="side" aria-label="연수 단계">
+    <a class="brand" href="#home"><img src="art/noti_wave.png" alt="마스코트 노티"><span><b>AI·SW 트렌드로 읽는<br>디지털 리더십</b><small>관리자(교감) 연수 · 2026. 10. 29.</small></span></a>
+    <a class="navhome" href="#home" data-view="home">🏠 처음 화면</a>
+    <nav id="stepNav"></nav>
+    <div class="sidelinks">
+      <a href="#files" data-view="files"><img src="art/noti_checklist.png" alt="">실습 자료 내려받기</a>
+      <a href="#prompts" data-view="prompts"><img src="art/noti_book.png" alt="">프롬프트 모음</a>
+      <a href="#gallery" data-view="gallery"><img src="art/noti_pointer.png" alt="">결과물 갤러리</a>
+      <a href="https://notebook.google.com/" target="_blank" rel="noopener"><img src="art/noti_laptop.png" alt="">Gemini Notebook 열기 ↗</a>
+      <a id="padletLink" href="#" target="_blank" rel="noopener"><img src="art/noti_thumbs.png" alt="">연수 패들렛 열기 ↗</a>
+      <a href="https://gemini.google.com/" target="_blank" rel="noopener"><img src="art/noti_telescope.png" alt="">제미나이 사이트 열기 ↗</a>
+      <a href="https://www.canva.com/brand/join?token=5x8nGXb0Cr1xK1B8QDwQxg&amp;brandingVariant=edu&amp;invitationDestinationType=group" target="_blank" rel="noopener"><img src="art/noti_magnifier.png" alt="">캔바 열기 (초대 코드) ↗</a>
+    </div>
+    <div class="prog"><span id="progText">완료 0 / 8단계</span><div class="bar"><i id="progBar"></i></div></div>
+  </aside>
+  <main id="main"><div class="wrap" id="view"></div></main>
+</div>
+
+<script id="course" type="application/json">{"meta": {"course": "6", "date": "2026. 10. 29.(목)", "time": "13:00~14:50", "place": "연수원 성장관 컴퓨터1실", "target": "관리자(교감) 연수", "title": "AI·SW 트렌드로 읽는 디지털 리더십", "subtitle": "Gemini Notebook(노트북LM)으로 여는 교무 행정 — 인사·복무 규정 챗봇부터 교직원 안내 인포그래픽까지", "lecturer": "명진초등학교 교사 최일훈"}, "site": "https://hongdonedu.github.io/digital-leadership/", "files": {"manual": {"name": "2025_교원인사실무_매뉴얼.pdf", "label": "2025 교육공무원 인사실무 매뉴얼", "kind": "PDF", "size": "3.1MB", "use": "STEP 2~5 인사·복무 노트북 소스", "desc": "임용 · 전보 · 휴직 · 복직 · 특별휴가 등 교원 인사 실무 전반을 담은 매뉴얼 (437쪽)"}, "detail": {"name": "2026_유초등교원_인사관리세부기준.pdf", "label": "2026학년도 유·초등교원 인사관리세부기준", "kind": "PDF", "size": "0.9MB", "use": "STEP 2~5 인사·복무 노트북 소스", "desc": "교육지원청 유·초등교원 전보 · 교(원)감 전보 · 가산점 세부기준"}, "compare": {"name": "2026_인사관리기준_개정_신구대비표.pdf", "label": "2026 인사관리기준 개정 신구대비표", "kind": "PDF", "size": "0.5MB", "use": "STEP 3 · 4 달라진 점 분석", "desc": "2026학년도 인사관리기준 개정 조항을 신 · 구로 나란히 비교한 표"}, "script": {"name": "연수원고_AI·SW트렌드로읽는디지털리더십.hwpx", "label": "연수 원고 — AI·SW 트렌드로 읽는 디지털 리더십", "kind": "HWPX", "size": "0.5MB", "use": "STEP 1 트렌드 노트북 소스", "desc": "오늘 연수 원고 — 한글(.hwpx) 파일은 변환 없이 바로 소스로 들어가요"}}, "zip": "디지털리더십_연수자료.zip", "card": "디지털리더십_프롬프트카드.pdf", "parts": [{"id": "p1", "num": "Ⅰ", "title": "트렌드를 읽는 눈", "sub": "기능이 아니라 방향 — 근거 기반 AI · 에이전트 AI · 바이브 코딩", "art": "art/ch1.webp", "steps": ["s0", "s1"]}, {"id": "p2", "num": "Ⅱ", "title": "인사·복무 규정 노트북", "sub": "매뉴얼 437쪽을 교무실의 24시간 도우미로", "art": "art/ch2.webp", "steps": ["s2", "s3"]}, {"id": "p3", "num": "Ⅲ", "title": "교직원에게 전하는 안내 자료", "sub": "인포그래픽 · 슬라이드 · 데이터 표 · 오디오를 클릭 한 번으로", "art": "art/ch3.webp", "steps": ["s4", "s5"]}, {"id": "p4", "num": "Ⅳ", "title": "디지털 리더십 실천", "sub": "공유하고, 넓히고, 기준을 함께 세우기", "art": "art/ch4.webp", "steps": ["s6", "s7"]}], "steps": [{"id": "s0", "part": "p1", "num": 0, "title": "준비 — 로그인하고 자료 받기", "short": "준비", "icon": "art/noti_wave.png", "goal": "로그인하고 실습 자료 받기", "files": ["manual", "detail", "compare", "script"], "caps": [{"img": "cap/a00_home.jpg", "w": 1568, "h": 751, "title": "첫 화면 — Gemini Notebook (옛 NotebookLM)", "marks": [[1446, 566, 96, 36, 1, "red"]], "steps": ["오른쪽 ‘+ 새 노트북’을 누르면 빈 노트북이 열려요"]}], "todo": ["크롬에서 notebook.google.com 접속 (‘노트북LM’으로 검색해도 같은 곳)", "학교 구글 계정(교육용) 또는 내 구글 계정으로 로그인", "‘실습 자료’에서 인사 규정 PDF 3종과 연수 원고 받아 두기"], "prompts": [], "tips": ["2026년 7월 NotebookLM이 ‘Gemini Notebook’으로 이름을 바꿨어요. 기존 노트북과 접속 주소는 그대로입니다.", "교육용 계정에서 올린 자료와 대화는 Google의 일반 AI 모델 학습에 쓰이지 않는 것이 원칙이에요. 무료로도 노트북 100개, 노트북당 소스 50개.", "인사 규정 PDF는 교육청 배포 자료, 연수 원고는 오늘 연수 교재입니다."], "live": []}, {"id": "s1", "part": "p1", "num": 1, "title": "트렌드 읽기 — 세 키워드와 딥 리서치", "short": "트렌드 읽기", "icon": "art/noti_telescope.png", "goal": "트렌드 3키워드 · 딥 리서치 · 한 장 요약", "files": ["script"], "trend": true, "caps": [{"img": "cap/b01_trend_sources.jpg", "w": 1568, "h": 705, "title": "원고 한 편으로 시작 — 소스 1개", "marks": [[16, 246, 372, 32, 1, "red"], [100, 178, 140, 32, 2, "red"], [484, 246, 580, 124, 3, "green"]], "steps": ["소스: 오늘 연수 원고 (.hwpx 그대로)", "검색창 아래 ‘Fast Research’ → ‘Deep Research’로 바꾸기", "소스 가이드 — 원고 요약이 자동으로"]}, {"img": "cap/b02_deep_research.jpg", "pr": [[1, "T1"]], "w": 1568, "h": 705, "title": "딥 리서치에 조사 주제 넣기", "marks": [[16, 136, 376, 86, 1, "red"], [350, 184, 36, 34, 2, "green"]], "steps": ["조사할 주제를 한 문장으로", "→ 눌러 시작 — 몇 분 동안 AI가 웹을 탐색"]}, {"img": "cap/b05_deep_done.jpg", "w": 1568, "h": 705, "title": "딥 리서치 완료 — 보고서 + 소스 33개", "marks": [[16, 240, 376, 186, 1, "red"], [308, 382, 78, 36, 2, "green"], [1158, 330, 374, 96, 3, "green"]], "steps": ["보고서와 찾은 소스 목록", "‘가져오기’로 노트북 소스에 추가", "기다리는 동안 스튜디오에 인포그래픽 · 오디오를 걸어 둠"]}, {"img": "cap/b06_sources_imported.jpg", "w": 1568, "h": 705, "title": "가져온 뒤 — 소스 35개", "marks": [[16, 226, 374, 466, 1, "red"], [484, 192, 128, 24, 2, "green"]], "steps": ["교육부 · 교육청 · 연구기관 자료가 소스로", "원고 + 보고서 + 웹 자료 = 소스 35개"]}, {"img": "cap/b07_trend_table.jpg", "pr": [[1, "T2"]], "w": 1568, "h": 705, "title": "교감 눈높이로 묻기 — 트렌드 3가지 표", "marks": [[511, 74, 554, 92, 1, "red"], [488, 328, 548, 290, 2, "green"], [874, 330, 162, 288, 3, "red"]], "steps": ["열 이름까지 정해 주는 질문", "근거 번호가 붙은 표", "‘교감이 바로 할 일’ 열 — 실천으로 연결"]}, {"img": "cap/b03_trend_info_customize.jpg", "pr": [[3, "T3"]], "w": 1568, "h": 705, "title": "한 장 요약 인포그래픽 — 가로", "marks": [[786, 150, 72, 38, 1, "red"], [440, 238, 126, 98, 2, "red"], [440, 505, 680, 82, 3, "green"], [1055, 604, 80, 42, 4, "green"]], "steps": ["방향: 가로", "스타일: 자동 선택", "설명: 왼쪽 트렌드 · 오른쪽 교감의 세 얼굴 · 남색·금색", "지금 생성"]}, {"img": "cap/b04_trend_audio_customize.jpg", "pr": [[3, "T4"]], "w": 1568, "h": 705, "title": "AI 오디오 오버뷰 — 심층 분석 대화", "marks": [[440, 168, 164, 130, 1, "red"], [716, 340, 86, 38, 2, "red"], [440, 430, 688, 108, 3, "green"], [1055, 588, 80, 42, 4, "green"]], "steps": ["형식: 심층 분석 (두 진행자의 대화)", "길이: 기본값", "학교 현장 예시로 풀어 달라고 적기", "지금 생성 → 17분 22초"]}], "results": ["nlm/info_trend.jpg"], "todo": ["새 노트북에 연수 원고(.hwpx) 넣기", "Deep Research로 조사 주제 보내기 → 가져오기", "트렌드 3가지 표 질문하기", "스튜디오: 인포그래픽 · 오디오 걸어 두기"], "prompts": [{"id": "T1", "title": "딥 리서치 주제 — 관리자 디지털 리더십 동향", "tool": "출처 · Deep Research", "where": "왼쪽 출처의 검색 칸 (‘Deep Research’ 선택)", "text": "2026년 학교 관리자(교감)의 디지털 리더십과 학교 생성형 AI 활용 가이드라인 동향"}, {"id": "T2", "title": "트렌드 3가지 — 교감이 바로 할 일까지", "tool": "채팅", "where": "가운데 아래 ‘질문하거나 창작하세요’ 칸", "text": "딥 리서치로 찾은 자료를 바탕으로 2026년 학교 관리자(교감)가 알아야 할 AI·SW 트렌드 3가지를 표로 정리해 줘. 열은 트렌드 · 무엇이 달라졌나 · 교무 행정에 주는 의미 · 교감이 바로 할 일로 하고, 표 아래에 교직원 회의에서 던질 질문 2개를 넣어 줘."}, {"id": "T3", "title": "트렌드 한 장 요약 인포그래픽", "tool": "스튜디오 · 인포그래픽", "where": "만들려는 인포그래픽에 대한 설명", "settings": ["방향: 가로", "스타일: 자동 선택", "세부정보: 표준"], "text": "교감 선생님을 위한 '2026 AI·SW 트렌드 한 장 요약'. 왼쪽에 트렌드 3키워드(근거 기반 AI, 에이전트 AI, 바이브 코딩)와 학교 운영에 주는 의미, 오른쪽에 교감 디지털 리더십의 세 얼굴(먼저 써 보는 사람, 기준을 세우는 사람, 연결하는 사람). 남색·금색의 고급스럽고 깔끔한 스타일."}, {"id": "T4", "title": "심층 분석 오디오 — 트렌드 대화", "tool": "스튜디오 · AI 오디오 오버뷰", "where": "AI 호스트가 이 에피소드의 어떤 부분에 집중해야 하나요?", "settings": ["형식: 심층 분석", "길이: 기본값", "언어: 한국어"], "text": "교감 선생님들을 위한 'AI·SW 트렌드로 읽는 디지털 리더십' 대화. 근거 기반 AI와 환각의 차이, 에이전트 AI, 바이브 코딩을 학교 현장 예시(특별휴가 일수, 회의록, 교직원 퀴즈 앱)로 쉽게 풀고, 마지막에 교감의 세 얼굴(먼저 써 보는 사람, 기준을 세우는 사람, 연결하는 사람)을 정리해줘. 차분하고 신뢰감 있는 말투."}], "tips": ["딥 리서치로 가져온 웹 자료는 따로 사실 확인이 필요해요. 정확한 근거 분석은 Gemini Notebook에서, 창작과 최신 정보 결합은 제미나이에서 하는 것이 요령입니다.", "‘Fast Research’는 1~2분, ‘Deep Research’는 몇 분이 걸리지만 보고서까지 만들어 줍니다. 기다리는 동안 다음 STEP으로 넘어가세요."], "challenge": "우리 학교 교육계획서를 소스에 더하고 ‘딥 리서치 보고서와 비교해 내년 계획에 반영할 디지털 전환 과제 5가지’를 물어보세요(STEP 6 · W6). 외부 동향 × 우리 학교 현황이 결합된 초안이 나옵니다.", "live": [{"t": "AI·SW 트렌드와 디지털 리더십 노트북", "i": "📒", "u": "https://notebook.google.com/notebook/aebbaf62-4060-4f17-9199-74650c69a60f"}, {"t": "트렌드 한 장 요약 인포그래픽", "i": "🖼️", "u": "https://notebook.google.com/notebook/aebbaf62-4060-4f17-9199-74650c69a60f/artifact/156c7b71-0ec4-48fd-8a89-c26d83c1099c"}, {"t": "심층 분석 오디오 (17:22)", "i": "🎧", "u": "https://notebook.google.com/notebook/aebbaf62-4060-4f17-9199-74650c69a60f/artifact/c2051a71-01b6-4317-8f6d-4f3ed11a7605"}]}, {"id": "s2", "part": "p2", "num": 2, "title": "인사·복무 노트북 만들기 — 규정 PDF 3종 넣기", "short": "규정 노트북 만들기", "icon": "art/noti_laptop.png", "goal": "새 노트북에 인사 규정 소스 넣기", "files": ["manual", "detail", "compare"], "caps": [{"img": "cap/a01_add_source.jpg", "w": 1568, "h": 751, "title": "소스 추가 창", "marks": [[512, 360, 114, 36, 1, "red"], [514, 450, 540, 106, 2, "red"]], "steps": ["‘파일 업로드’로 PDF 3개를 한꺼번에 고르기", "또는 파일을 이 칸으로 끌어다 놓기"]}, {"img": "cap/a02_sources.jpg", "pr": [[0, "L0"]], "w": 1568, "h": 751, "title": "소스 3개가 들어간 모습", "marks": [[16, 248, 372, 88, 1, "red"], [58, 8, 380, 36, 2, "green"], [484, 248, 540, 100, 3, "green"]], "steps": ["매뉴얼 · 세부기준 · 신구대비표 — 체크 표시 확인", "제목을 ‘교원 인사·복무 도우미’로 바꾸기", "소스 가이드: 437쪽 요약과 추천 질문"]}], "todo": ["‘+ 새 노트북’ → ‘파일 업로드’", "인사 규정 PDF 3종 넣기", "노트북 제목 바꾸기", "첫 질문 던져 보기"], "prompts": [{"id": "L0", "title": "첫 질문 — 세 문서 한눈에", "tool": "채팅", "where": "가운데 아래 ‘질문하거나 창작하세요’ 칸", "text": "등록한 세 문서가 각각 어떤 문서인지 한 줄씩 소개하고, 교감이 가장 자주 찾게 될 항목 5가지를 문서 이름과 함께 알려줘."}], "tips": ["한글 공문은 .hwpx나 PDF로 저장해 넣으세요. 예전 한글 파일(.hwp)은 오류가 날 수 있어요.", "규정이 개정되면 소스만 바꾸면 됩니다. 노트북 링크는 그대로라 공유받은 선생님들도 새 규정으로 답을 받아요.", "소스는 꼭 필요한 것만. 질문할 때 체크 표시로 쓸 문서만 골라도 됩니다."], "live": [{"t": "교원 인사·복무 도우미 노트북", "i": "📒", "u": "https://notebook.google.com/notebook/fa00c43b-7930-4c87-93af-7f4498db0b9d"}]}, {"id": "s3", "part": "p2", "num": 3, "title": "규정 챗봇 — 맞춤 지침 · 인사 사례 질문 · 인용 확인", "short": "규정 챗봇·인사 사례", "icon": "art/noti_magnifier.png", "goal": "지침 저장 · 사례로 묻기 · 원문 대조", "files": ["manual", "detail", "compare"], "caps": [{"img": "cap/a03_menu_chat_settings.jpg", "w": 1568, "h": 751, "title": "⋮ → 채팅 설정", "marks": [[1366, 10, 32, 32, 1, "red"], [1376, 46, 104, 30, 2, "red"]], "steps": ["오른쪽 위 ⋮ (옵션 더보기)", "‘채팅 설정’"]}, {"img": "cap/a04_chat_settings.jpg", "pr": [[2, "L1"]], "w": 1568, "h": 751, "title": "맞춤 지침 — 인사·복무 도우미", "marks": [[494, 290, 74, 38, 1, "red"], [334, 340, 900, 90, 2, "red"], [1180, 562, 70, 38, 3, "green"]], "steps": ["‘맞춤’ 선택", "지침 붙여 넣기 — 근거 · 원문 그대로 · 확인 필요", "저장 — 이 노트북의 모든 대화에 적용"]}, {"img": "cap/a05_special_leave.jpg", "pr": [[1, "L2"]], "w": 1568, "h": 751, "title": "사례 ① 특별휴가 — 결재 때 확인할 점까지", "marks": [[511, 74, 554, 74, 1, "red"], [486, 206, 550, 445, 2, "green"]], "steps": ["사유 · 일수 · 유의 사항 열을 지정", "일수마다 인용 번호 — 매뉴얼 원문으로"]}, {"img": "cap/a06_citation.jpg", "w": 1568, "h": 751, "title": "인용 번호 → 원문 미리보기", "marks": [[722, 392, 28, 24, 1, "red"], [736, 52, 322, 326, 2, "red"]], "steps": ["답 속 숫자에 마우스 올리기", "매뉴얼 해당 부분 원문 — 결재 전에 대조"]}, {"img": "cap/a07_changes.jpg", "pr": [[1, "L3"]], "w": 1568, "h": 751, "title": "사례 ② 2026 달라진 점 — 신구대비표 분석", "marks": [[511, 74, 554, 92, 1, "red"], [486, 220, 550, 440, 2, "green"], [874, 256, 164, 400, 3, "red"]], "steps": ["관련 조항 · 바뀐 내용 · 챙길 점으로", "IB인증학교 비정기 전출, 중증 장애 자녀 부양자 우대 등", "‘우리 학교(교감)가 챙겨야 할 점’ 열"]}, {"img": "cap/a08_parental_leave.jpg", "pr": [[1, "L4"]], "w": 1568, "h": 751, "title": "사례 ③ 교사 문의 응대 — 육아휴직 안내문", "marks": [[511, 74, 554, 92, 1, "red"], [486, 206, 560, 450, 2, "green"], [912, 350, 100, 24, 3, "red"]], "steps": ["실제 받은 문의를 그대로 질문으로", "메신저로 보낼 정중한 안내문 형태", "모르는 부분은 ‘확인 필요’ — 지침대로"]}, {"img": "cap/a09_vp_transfer.jpg", "pr": [[1, "L5"]], "w": 1568, "h": 751, "title": "사례 ④ 교(원)감 전보 기준 요약표", "marks": [[511, 74, 554, 74, 1, "red"], [486, 268, 550, 400, 2, "green"]], "steps": ["세부기준에서 해당 부분만 콕 집어", "전보 대상 · 근무 기간 · 제한 · 우대 사항"]}], "todo": ["⋮ → 채팅 설정 → 맞춤 → 지침 저장", "인사 사례 ①~④ 중 두 개 이상 질문", "답 속 숫자에 마우스 올려 원문 대조", "소스에 없는 질문도 일부러 해 보기"], "prompts": [{"id": "L1", "title": "맞춤 지침 — 교감을 돕는 인사·복무 도우미", "tool": "채팅 설정", "where": "⋮ → 채팅 설정 → 맞춤", "text": "당신은 부산 초등학교 교감을 돕는 인사·복무 도우미입니다. 반드시 등록된 소스(교원인사실무 매뉴얼, 인사관리기준 신구 대비표, 인사관리세부기준)에 근거해서만 답하고, 소스에 없는 내용은 '소스에 없음'이라고 명시하세요. 날짜·일수·점수·기준은 원문 그대로 쓰고, 답변 끝에 관련 문서명과 조항을 적어 주세요. 확실하지 않은 내용은 '확인 필요'로 표시하고, 답변은 개조식으로 간결하게 작성하세요."}, {"id": "L2", "title": "사례 ① 특별휴가 종류와 일수", "tool": "채팅", "where": "채팅 입력 칸", "text": "교원의 특별휴가 종류와 일수를 표로 정리해 줘. 사유, 일수, 유의 사항 열로 나눠 주고, 표 아래에 교감이 결재할 때 확인할 점 3가지를 덧붙여 줘."}, {"id": "L3", "title": "사례 ② 2026 인사관리기준 달라진 점", "tool": "채팅", "where": "채팅 입력 칸", "text": "2026학년도 인사관리기준 신구 대비표에서 작년과 달라진 점을 항목별로 표로 정리해 줘. 관련 조항, 바뀐 내용, 우리 학교(교감)가 챙겨야 할 점 열로 나눠 주고, 선생님들에게 안내할 핵심 3줄을 마지막에 써 줘."}, {"id": "L4", "title": "사례 ③ 교사 문의 — 육아휴직 안내문", "tool": "채팅", "where": "채팅 입력 칸", "text": "3학년 담임 선생님이 내년 3월부터 육아휴직을 하고 싶다고 문의했어. 신청 시기와 절차, 제출 서류, 휴직 기간, 복직할 때 유의점을 선생님께 보낼 메신저 안내문으로 정중하게 써 줘. 소스에 없는 내용은 '확인 필요'로 표시해 줘."}, {"id": "L5", "title": "사례 ④ 교(원)감 전보 기준", "tool": "채팅", "where": "채팅 입력 칸", "text": "인사관리세부기준에서 교(원)감 전보 기준만 뽑아서 전보 대상, 근무 기간, 제한 사항, 우대·고려 사항으로 나눠 표로 정리해 줘."}, {"id": "L6", "title": "사례 ⑤ 복직 준비 체크리스트", "tool": "채팅", "where": "채팅 입력 칸", "text": "육아휴직 2년을 마치고 3월에 복직하는 교사가 있어. 복직 신청부터 첫 출근까지 교감이 챙길 일을 기한 순서로 체크리스트(□)로 만들어 줘. 복직 전 직무연수, 결핵검진처럼 놓치기 쉬운 것도 꼭 넣어 줘."}, {"id": "L7", "title": "사례 ⑥ 전보 희망 교사 상담", "tool": "채팅", "where": "채팅 입력 칸", "text": "우리 학교에서 5년 근무한 교사가 다른 교육지원청으로 전보를 희망해. 인사관리세부기준에서 교육지원청 간 전보 요건, 우선순위, 제출 서류를 정리하고, 교감이 상담할 때 확인할 질문 3가지를 알려줘."}, {"id": "L8", "title": "확인 질문 — 소스에 없는 것 물어보기", "tool": "채팅", "where": "채팅 입력 칸", "text": "우리 학교의 2027학년도 전보 내신서 제출 마감일은 언제야?"}], "tips": ["인용 확인 3단계: ① 숫자를 눌러 원문 대조 ② ‘추론으로 채운 부분을 표시해 줘’ ③ 날짜 · 일수 · 점수는 반드시 원문으로.", "L8처럼 소스에 없는 것을 물으면 ‘소스에 없음’이라고 답해요. 이것이 일반 챗봇과 다른 근거 기반 AI의 힘입니다.", "교원 개인의 실명 · 주민번호 · 질병 같은 민감 정보는 넣지 않습니다. 사례는 ‘3학년 담임 A교사’처럼 비식별로.", "AI 답은 초안입니다. 결재와 안내 전에 최신 교육청 공문과 한 번 더 대조하세요."], "live": [{"t": "교원 인사·복무 도우미 노트북", "i": "📒", "u": "https://notebook.google.com/notebook/fa00c43b-7930-4c87-93af-7f4498db0b9d"}]}, {"id": "s4", "part": "p3", "num": 4, "title": "교직원 안내 인포그래픽 — 인사 변경 · 휴직 안내", "short": "안내 인포그래픽", "icon": "art/noti_book.png", "goal": "선생님들께 보낼 한 장 안내문", "files": ["compare", "manual"], "caps": [{"img": "cap/a10_info_customize.jpg", "pr": [[3, "I1"]], "w": 1568, "h": 751, "title": "인포그래픽 맞춤설정 — 세로 · 메신저용", "marks": [[834, 162, 72, 38, 1, "red"], [440, 248, 126, 98, 2, "red"], [440, 516, 688, 88, 3, "green"], [1052, 636, 84, 42, 4, "green"]], "steps": ["방향: 세로 (휴대폰으로 보기 좋게)", "스타일: 자동 선택", "제목 · 카드 형식 · 하단 문구까지 지정", "지금 생성"]}], "results": ["nlm/info_changes.jpg", "nlm/info_leave.jpg"], "review": {"title": "보내기 전에 — 글자 검수", "d": "인포그래픽은 그림으로 만들어져서 글자가 틀릴 수 있어요. 실제로 만든 결과에서 찾은 오탈자입니다. 숫자 · 용어는 원문과 대조하고, 틀린 곳은 캔바에서 고치거나 I3 프롬프트로 다시 만드세요.", "items": [["종종 장애 자녀", "중증 장애 자녀"], ["3자녀 아상", "3자녀 이상"], ["(산설)", "(신설)"], ["+힘산", "+합산"], ["6월 30밀", "6월 30일"], ["진팽 종", "진행 중"]]}, "todo": ["스튜디오 → ‘인포그래픽’ 클릭", "세로 · 자동 선택 · 설명 붙여 넣기 → 지금 생성", "가로 · 귀여움으로 휴직 안내도 만들기", "글자 검수 후 교직원 메신저로"], "prompts": [{"id": "I1", "title": "인사관리기준 변경 안내 — 세로 한 장", "tool": "스튜디오 · 인포그래픽", "where": "만들려는 인포그래픽에 대한 설명", "settings": ["방향: 세로", "스타일: 자동 선택", "세부정보: 표준"], "text": "선생님들께 메신저로 보낼 한 장 안내문. 제목은 '2026학년도 인사관리기준, 이렇게 달라졌어요'. 신구 대비표의 바뀐 내용을 카드 형식으로 '무엇이 → 어떻게' 쉽게 보여 주고, 용어는 원문 그대로. 하단에 '자세한 기준은 교무실로 문의해 주세요' 한 줄. 남색·청록 색감의 깔끔한 안내 스타일."}, {"id": "I2", "title": "교원 휴직 한눈에 보기 — 가로 · 귀여움", "tool": "스튜디오 · 인포그래픽", "where": "만들려는 인포그래픽에 대한 설명", "settings": ["방향: 가로", "스타일: 귀여움", "세부정보: 표준"], "text": "선생님을 위한 '교원 휴직 한눈에 보기'. 인사실무 매뉴얼을 바탕으로 질병휴직·육아휴직·가족돌봄휴직·동반휴직·자율연수휴직의 요건과 기간을 카드로 정리하고, 아래에는 휴직 신청과 복직 때 꼭 챙길 점(반기별 실태 보고, 복직 전 직무연수, 결핵검진)을 체크포인트로 보여 줘. 따뜻하고 귀여운 선생님 일러스트."}, {"id": "I3", "title": "다시 만들기 — 글자는 짧고 정확하게", "tool": "스튜디오 · 인포그래픽", "where": "설명 칸 끝에 덧붙이기", "text": "카드마다 글자는 짧게(한 줄 15자 이내) 쓰고, 용어와 숫자는 소스 원문 그대로 정확하게 써 줘. 숫자와 날짜는 크게, 설명 문장은 최소로."}], "tips": ["세로는 메신저 · 휴대폰용, 가로는 교직원 회의 화면용으로 알맞아요.", "스타일: 자동 · 귀여움 · 클레이 · 스케치 노트 · 일본 애니메이션 … 안내문은 ‘자동’에 색을 지정하거나 ‘귀여움’이 무난합니다.", "보내기 전 체크: 숫자 · 날짜 · 용어 · 맞춤법. AI 활용 표기(STEP 7 · G2)도 하단에 한 줄."], "live": [{"t": "인사관리기준 변경 안내 (세로)", "i": "🖼️", "u": "https://notebook.google.com/notebook/fa00c43b-7930-4c87-93af-7f4498db0b9d/artifact/68fe6b24-80f7-40e4-8fb8-41db026877f3"}, {"t": "교원 휴직 한눈에 보기 (가로)", "i": "🖼️", "u": "https://notebook.google.com/notebook/fa00c43b-7930-4c87-93af-7f4498db0b9d/artifact/62db0bd0-4161-44b9-b253-d2a60fad63d1"}]}, {"id": "s5", "part": "p3", "num": 5, "title": "전달 연수 자료 — 슬라이드 · 데이터 표 · 오디오", "short": "슬라이드·표·오디오", "icon": "art/noti_pointer.png", "goal": "회의 슬라이드 · 비교표 · 출퇴근길 오디오", "files": ["manual", "detail", "compare"], "caps": [{"img": "cap/a11_slides_customize.jpg", "pr": [[3, "S1"]], "w": 1568, "h": 751, "title": "슬라이드 자료 — 발표자 슬라이드 · 짧게", "marks": [[786, 186, 342, 102, 1, "red"], [675, 327, 72, 38, 2, "red"], [440, 415, 688, 108, 3, "green"], [1055, 612, 80, 42, 4, "green"]], "steps": ["형식: 발표자 슬라이드", "길이: 짧게", "[역할 및 대상] [내용] [디자인] 세 덩어리", "지금 생성 → 7장"]}, {"img": "cap/n1_table.jpg", "pr": [[0, "S2"]], "w": 1568, "h": 751, "title": "데이터 표 — 휴직 종류별 비교표", "marks": [[16, 122, 1528, 68, 1, "red"], [1326, 62, 84, 30, 2, "green"]], "steps": ["근거 · 요건 · 기간 · 직권/청원 · 경력 인정 · 서류를 한 표에", "링크 복사로 바로 공유 — 표는 복사해 한글 · 엑셀에 붙여 넣기"]}, {"img": "cap/a12_audio_customize.jpg", "pr": [[2, "A1"]], "w": 1568, "h": 751, "title": "AI 오디오 오버뷰 — 요약 · 출퇴근길 브리핑", "marks": [[613, 190, 168, 134, 1, "red"], [440, 452, 688, 106, 2, "green"], [1055, 610, 80, 42, 3, "green"]], "steps": ["형식: 요약 (짧게 핵심만)", "교감이 전하듯 — 말투와 마무리까지 지정", "지금 생성 → 1분 46초"]}, {"img": "cap/n1_audio.jpg", "w": 1568, "h": 751, "title": "완성된 브리핑 오디오 (1:46)", "marks": [[500, 520, 560, 104, 1, "red"], [1326, 62, 84, 30, 2, "green"]], "steps": ["재생 · 배속 · 10초 앞뒤로", "링크 복사 → 교직원 메신저로 (노트북 공유 후)"]}], "results": ["nlm/slide1.jpg", "nlm/slide2.jpg", "nlm/slide3.jpg", "nlm/slide4.jpg", "nlm/slide5.jpg", "nlm/slide6.jpg", "nlm/slide7.jpg"], "todo": ["슬라이드: 발표자 · 짧게 · 세 덩어리 설명", "데이터 표: 휴직 종류별 비교", "오디오: 요약 · 교감 말투", "결과물 하나를 교직원에게 보낼 문구와 함께 저장"], "prompts": [{"id": "S1", "title": "교직원 회의 슬라이드 — 세 덩어리 설명", "tool": "스튜디오 · 슬라이드 자료", "where": "만들려는 슬라이드 자료에 대한 설명", "settings": ["발표자 슬라이드", "길이: 짧게", "언어: 한국어"], "text": "[역할 및 대상] 교감이 교직원 회의에서 쓰는 '2026 교원 인사 안내' 발표자 슬라이드를 짧게 만들어줘. [내용] 2026 인사관리기준 달라진 점, 전보 기준의 핵심, 휴직·복직 신청 때 유의점, 특별휴가 핵심을 소스 근거로. [디자인] 남색·청록·금색의 깔끔하고 신뢰감 있는 스타일, 제목은 크고 선명하게, 장마다 핵심 3줄 이내. 마지막 장은 '궁금한 점은 교무실로'."}, {"id": "S2", "title": "데이터 표 — 휴직 종류별 비교", "tool": "스튜디오 · 데이터 표", "where": "만들려는 표에 대한 설명", "text": "교원 휴직을 종류별로 비교하는 표. 열은 휴직 종류, 근거(법조항), 요건, 기간, 임용권자 재량 여부(직권/청원), 경력 인정, 신청 시 주요 서류로 하고, 소스의 원문 표현을 그대로 써 줘."}, {"id": "A1", "title": "출퇴근길 브리핑 — 요약 오디오", "tool": "스튜디오 · AI 오디오 오버뷰", "where": "AI 호스트가 이 에피소드의 어떤 부분에 집중해야 하나요?", "settings": ["형식: 요약", "언어: 한국어"], "text": "교직원이 출퇴근길에 듣는 '2026 인사·복무 브리핑'. 교감이 선생님들께 전하듯 따뜻하고 차분한 말투로, 2026 인사관리기준 달라진 점, 휴직·복직 신청 때 놓치기 쉬운 점, 특별휴가 핵심 숫자를 사례와 함께 설명해줘. 마지막은 '자세한 내용은 교무실에 확인하세요'로 마무리."}], "tips": ["슬라이드는 ⋮에서 PDF · PowerPoint(.pptx)로 받아 학교 양식에 맞게 다듬을 수 있어요. 개요 검토를 켜면 만들기 전에 흐름을 고칠 수 있습니다.", "오디오 ‘요약’은 1~2분, ‘심층 분석’은 10분 이상. 교직원 전달용은 요약이 알맞아요.", "여러 연수 자료를 함께 올리고 ‘우리 학교에서 당장 실천할 수 있는 다섯 가지’를 요청하면 입체적인 요약이 됩니다."], "live": [{"t": "교원 인사 안내 슬라이드 7장", "i": "🎞️", "u": "https://notebook.google.com/notebook/fa00c43b-7930-4c87-93af-7f4498db0b9d/artifact/533f19b9-989e-461e-bdcf-eb4b48ab86a5"}, {"t": "휴직 종류별 비교표", "i": "📊", "u": "https://notebook.google.com/notebook/fa00c43b-7930-4c87-93af-7f4498db0b9d/artifact/32137e1c-0725-4c5a-9f1d-e939001560fd"}, {"t": "인사·복무 브리핑 오디오 (1:46)", "i": "🎧", "u": "https://notebook.google.com/notebook/fa00c43b-7930-4c87-93af-7f4498db0b9d/artifact/88bec61e-df40-4418-8cac-b8a41866dcf7"}]}, {"id": "s6", "part": "p4", "num": 6, "title": "공유하고 넓히기 — 뷰어 공유 · 공문 체크리스트 · 바이브 코딩", "short": "공유·업무 확장", "icon": "art/noti_thumbs.png", "goal": "규정 노트북 공유 · 다른 업무로 넓히기", "files": [], "caps": [{"img": "cap/b08_share.jpg", "w": 1568, "h": 705, "title": "공유 — 링크가 있는 사용자 · 보기 전용", "marks": [[548, 356, 470, 66, 1, "red"], [986, 432, 32, 30, 2, "red"], [944, 524, 70, 40, 3, "green"]], "steps": ["노트북 액세스: 링크가 있는 모든 사용자 (또는 학교 도메인)", "사본 생성 허용 끄기", "저장 → 링크 복사해 메신저로"]}], "scenarios": [{"k": "가", "t": "공문 · 지침 분석", "d": "올해와 작년 지침을 함께 넣고 달라진 점 비교 → 역할별 · 기한별 체크리스트 → 회의용 인포그래픽", "p": ["W2", "W3"], "icon": "art/noti_checklist.png"}, {"k": "나", "t": "규정 · 복무 챗봇", "d": "복무 규정 · 학칙 · 교육과정 운영 계획을 한 노트북에 — 뷰어 권한으로 공유하면 반복 질문이 줄어요", "p": ["W1", "W4"], "icon": "art/noti_magnifier.png"}, {"k": "다", "t": "바이브 코딩 · 외부 동향", "d": "제미나이 캔버스로 교직원 퀴즈 앱을 말로 만들고, 딥 리서치 보고서와 우리 학교 계획을 비교", "p": ["W5", "W6"], "icon": "art/noti_pointer.png"}], "todo": ["공유 → 링크가 있는 모든 사용자 · 사본 생성 끄기 → 저장", "W1로 교직원 공유 안내문 만들기", "공문 · 바이브 코딩 프롬프트 중 하나 해 보기"], "prompts": [{"id": "W1", "title": "공유 안내문 — 우리 학교 인사·복무 도우미", "tool": "채팅", "where": "인사·복무 노트북 채팅 칸", "text": "교직원 메신저로 보낼 '우리 학교 인사·복무 도우미 노트북' 공유 안내문을 써 줘. 무엇을 물어볼 수 있는지 예시 질문 3개, 답 속 숫자를 눌러 원문을 확인하는 방법, 최종 판단은 교무실 확인이라는 당부를 넣어 줘."}, {"id": "W2", "title": "실습 1 — 올해와 작년 지침 비교", "tool": "채팅", "where": "올해 · 작년 현장체험학습 매뉴얼을 넣은 노트북", "text": "2025년 지침과 비교했을 때 2026년에 달라진 내용을 항목별로 표로 정리해 줘."}, {"id": "W3", "title": "실습 1 — 역할별 마감 체크리스트", "tool": "채팅", "where": "같은 노트북에서 이어서", "text": "업무 담당자와 인솔 교사에게 해당하는 지시 사항을 각각 나누어, 준비물·사전 교육·사후 보고 순서로 마감 기한이 포함된 체크리스트를 만들어 줘."}, {"id": "W4", "title": "학교운영위원회 심의 사항만", "tool": "채팅", "where": "학칙 · 교육과정 운영 계획을 넣은 노트북", "text": "학교운영위원회 심의를 거쳐야 하는 사항만 뽑아서 표로 정리해 줘. 근거 문서와 조항도 함께 적어 줘."}, {"id": "W5", "title": "바이브 코딩 — 교직원 연수 확인 퀴즈 앱", "tool": "제미나이 · 캔버스", "where": "gemini.google.com → 도구에서 ‘캔버스’ 선택", "text": "교직원 개인정보 보호 연수 확인 퀴즈를 HTML 파일 하나로 만들어 줘. 객관식 5문항을 한 문제씩 넘기며 풀고, 마지막에 점수와 해설을 보여 줘. 남색과 금색의 깔끔한 디자인, 휴대폰에서도 잘 보이게."}, {"id": "W6", "title": "외부 동향 × 우리 학교 계획", "tool": "채팅", "where": "트렌드 노트북에 우리 학교 교육계획을 더한 뒤", "text": "딥 리서치 보고서와 우리 학교 교육계획을 비교해서, 내년 계획에 반영할 디지털 전환 과제 5가지를 표로 정리해 줘. 열은 과제, 근거 자료, 담당, 추진 시기로 해 줘."}], "tips": ["공유 범위는 필요한 만큼만 — 학교 도메인 또는 링크가 있는 사용자(보기 전용). 사본 생성 허용은 끄기.", "공유받은 선생님은 소스를 고칠 수 없고, 각자 질문해서 답을 받습니다. 규정이 바뀌면 교감이 소스만 교체하세요.", "교감이 직접 코딩할 필요는 없지만 ‘이 정도는 우리 학교에서 반나절이면 만든다’는 감각이 예산과 결재 판단을 바꿉니다."], "live": [{"t": "교원 인사·복무 도우미 노트북", "i": "📒", "u": "https://notebook.google.com/notebook/fa00c43b-7930-4c87-93af-7f4498db0b9d"}, {"t": "AI·SW 트렌드와 디지털 리더십 노트북", "i": "📒", "u": "https://notebook.google.com/notebook/aebbaf62-4060-4f17-9199-74650c69a60f"}]}, {"id": "s7", "part": "p4", "num": 7, "title": "디지털 리더십 실천 — 7항목 점검과 토의", "short": "7항목 점검·토의", "icon": "art/noti_shield.png", "goal": "학교 AI 활용 7항목 · 우리 학교 첫 공용 노트북", "files": [], "caps": [], "checks": [{"k": "개인정보", "d": "학생 · 학부모 · 교직원의 식별 정보와 민감 정보를 AI 도구에 올리지 않았는가?"}, {"k": "검증", "d": "AI가 만든 내용을 원문 · 규정과 대조해 담당자가 직접 확인한 뒤 결재하는가?"}, {"k": "출처 · 표기", "d": "AI의 도움을 받은 자료에 활용 표기와 바탕 출처를 남기는가?"}, {"k": "저작권", "d": "권리가 있는 자료만 올리고, 외부 공개 시 기존 저작물과의 유사성을 확인하는가?"}, {"k": "공유 범위", "d": "학교 공용 노트북은 필요한 범위(뷰어 권한, 학교 도메인)로만 공유되는가?"}, {"k": "기록물", "d": "학교생활기록부 등 공식 기록물에 AI 생성문을 그대로 입력하지 않도록 안내하는가?"}, {"k": "교육적 균형", "d": "학생 활용은 교사 주도와 연령 정책을 따르고, 스스로 생각하는 활동과 균형을 이루는가?"}], "faces": true, "discuss": "우리 학교에서 교감이 가장 먼저 만들 ‘학교 공용 노트북’은 무엇인가? 소스 구성, 공유 범위, 관리 담당을 구체적으로 논의해 보자.", "refs": ["교육부(2022). 교육 분야 인공지능 윤리원칙.", "교육부(2023). 디지털 기반 교육혁신 방안.", "문화체육관광부 · 한국저작권위원회(2023). 생성형 AI 저작권 안내서.", "Google(2026). NotebookLM is now Gemini Notebook.", "OECD(2025). OECD Teaching Compass: Reimagining teachers as agents of curriculum change.", "Sheninger, E. C.(2019). Digital leadership (2nd ed.). Corwin.", "UNESCO(2023). Guidance for generative AI in education and research."], "todo": ["7항목 체크 — 우리 학교에 맞게 다듬을 항목 표시", "토의: 우리 학교 첫 공용 노트북 정하기", "패들렛 STEP 7에 소스 구성 · 공유 범위 · 담당 올리기"], "prompts": [{"id": "G1", "title": "우리 학교 AI 활용 가이드라인 초안 (7항목)", "tool": "채팅", "where": "트렌드 노트북 (딥 리서치 자료 포함)", "text": "소스의 AI 윤리 · 가이드라인 자료를 바탕으로 우리 학교 'AI 활용 가이드라인' 초안을 7항목(개인정보, 검증, 출처·표기, 저작권, 공유 범위, 기록물, 교육적 균형)으로 만들어 줘. 항목마다 교직원이 지킬 문장 1개와 학교 현장 예시 1개를 넣고, 교무실에 게시할 수 있게 한 쪽 분량으로."}, {"id": "G2", "title": "AI 활용 표기 문구", "tool": "채팅", "where": "결과물을 만든 노트북에서", "text": "이 노트북으로 만든 교직원 안내 자료 하단에 넣을 'AI 활용 표기' 문구를 한 줄로 써 줘. 활용 도구, 바탕 자료(소스 이름), 담당자 검토 여부가 들어가게 해 줘."}], "tips": ["‘근거를 확인하고, 사람이 최종 책임진다’ — 도구의 이름과 기능이 바뀌어도 변하지 않는 원칙입니다.", "가이드라인은 길 필요가 없어요. 7항목을 교직원과 함께 확정하면 새 도구가 나와도 같은 기준으로 판단할 수 있습니다."], "live": []}], "gallery": [{"img": "nlm/info_trend.jpg", "title": "2026 AI·SW 트렌드와 교감의 디지털 리더십", "tool": "인포그래픽 · 가로", "url": "https://notebook.google.com/notebook/aebbaf62-4060-4f17-9199-74650c69a60f/artifact/156c7b71-0ec4-48fd-8a89-c26d83c1099c", "step": "s1"}, {"img": "cap/b07_trend_table.jpg", "title": "교감을 위한 AI·SW 트렌드 3가지 (딥 리서치 근거)", "tool": "채팅 · 트렌드 노트북", "url": "https://notebook.google.com/notebook/aebbaf62-4060-4f17-9199-74650c69a60f", "step": "s1"}, {"img": "cap/n2_audio.jpg", "title": "근거 기반 AI와 교감의 디지털 리더십 (17:22)", "tool": "AI 오디오 오버뷰 · 심층 분석", "url": "https://notebook.google.com/notebook/aebbaf62-4060-4f17-9199-74650c69a60f/artifact/c2051a71-01b6-4317-8f6d-4f3ed11a7605", "step": "s1"}, {"img": "cap/a05_special_leave.jpg", "title": "교원 특별휴가 종류와 일수 — 결재 확인점까지", "tool": "채팅 · 규정 챗봇", "url": "https://notebook.google.com/notebook/fa00c43b-7930-4c87-93af-7f4498db0b9d", "step": "s3"}, {"img": "cap/a07_changes.jpg", "title": "2026 인사관리기준 주요 변경 사항", "tool": "채팅 · 규정 챗봇", "url": "https://notebook.google.com/notebook/fa00c43b-7930-4c87-93af-7f4498db0b9d", "step": "s3"}, {"img": "cap/a08_parental_leave.jpg", "title": "육아휴직 문의 — 메신저 안내문", "tool": "채팅 · 규정 챗봇", "url": "https://notebook.google.com/notebook/fa00c43b-7930-4c87-93af-7f4498db0b9d", "step": "s3"}, {"img": "cap/a09_vp_transfer.jpg", "title": "교(원)감 전보 기준 요약표", "tool": "채팅 · 규정 챗봇", "url": "https://notebook.google.com/notebook/fa00c43b-7930-4c87-93af-7f4498db0b9d", "step": "s3"}, {"img": "nlm/info_changes.jpg", "title": "2026학년도 인사관리기준, 이렇게 달라졌어요", "tool": "인포그래픽 · 세로", "url": "https://notebook.google.com/notebook/fa00c43b-7930-4c87-93af-7f4498db0b9d/artifact/68fe6b24-80f7-40e4-8fb8-41db026877f3", "step": "s4"}, {"img": "nlm/info_leave.jpg", "title": "선생님을 위한 교원 휴직 한눈에 보기", "tool": "인포그래픽 · 가로 · 귀여움", "url": "https://notebook.google.com/notebook/fa00c43b-7930-4c87-93af-7f4498db0b9d/artifact/62db0bd0-4161-44b9-b253-d2a60fad63d1", "step": "s4"}, {"img": "nlm/slides_m.jpg", "title": "2026 교원 인사 안내 — 교직원 회의 슬라이드 7장", "tool": "슬라이드 자료", "url": "https://notebook.google.com/notebook/fa00c43b-7930-4c87-93af-7f4498db0b9d/artifact/533f19b9-989e-461e-bdcf-eb4b48ab86a5", "step": "s5"}, {"img": "cap/n1_table.jpg", "title": "교원 휴직 종류별 비교표", "tool": "데이터 표", "url": "https://notebook.google.com/notebook/fa00c43b-7930-4c87-93af-7f4498db0b9d/artifact/32137e1c-0725-4c5a-9f1d-e939001560fd", "step": "s5"}, {"img": "cap/n1_audio.jpg", "title": "2026년 선생님 인사점수와 휴가 핵심 정리 (1:46)", "tool": "AI 오디오 오버뷰 · 요약", "url": "https://notebook.google.com/notebook/fa00c43b-7930-4c87-93af-7f4498db0b9d/artifact/88bec61e-df40-4418-8cac-b8a41866dcf7", "step": "s5"}], "notebooks": {"trend": {"t": "AI·SW 트렌드와 디지털 리더십", "u": "https://notebook.google.com/notebook/aebbaf62-4060-4f17-9199-74650c69a60f", "d": "연수 원고 + 딥 리서치 자료 35개 — 트렌드를 직접 물어보기"}, "hr": {"t": "교원 인사·복무 도우미", "u": "https://notebook.google.com/notebook/fa00c43b-7930-4c87-93af-7f4498db0b9d", "d": "인사실무 매뉴얼 · 세부기준 · 신구대비표 — 규정 챗봇 · 인포그래픽 · 슬라이드"}}, "trend": [{"k": "근거 기반 AI", "en": "Source-grounded AI", "icon": "art/noti_book.png", "what": "인터넷 전체가 아니라 ‘내가 준 자료’ 안에서만 답하고 출처를 보여 주는 AI가 주류가 됨", "mean": "공문 · 규정 · 계획서처럼 정확성이 생명인 학교 문서 업무에 AI를 쓸 수 있게 됨"}, {"k": "에이전트 AI", "en": "Agent AI", "icon": "art/noti_laptop.png", "what": "답만 하던 AI가 스스로 웹을 조사하고 코드를 실행하며 결과물까지 만드는 단계로 진화", "mean": "자료 조사 · 회의록 · 연수 자료처럼 ‘결과물’ 단위로 업무를 맡길 수 있음"}, {"k": "바이브 코딩", "en": "Vibe Coding", "icon": "art/noti_pointer.png", "what": "코드를 몰라도 말로 설명하면 프로그램이 만들어지는 ‘만드는 문화’의 확산", "mean": "우리 학교 사정에 맞는 작은 도구를 전문가 없이 직접 만드는 시대"}], "timeline": [{"y": "2022~2023", "t": "대화형 생성", "d": "ChatGPT 등장, 텍스트 생성의 대중화"}, {"y": "2024", "t": "멀티모달", "d": "텍스트 · 이미지 · 음성 · 영상을 한 도구 안에서"}, {"y": "2025", "t": "에이전트", "d": "스스로 계획하고 도구를 사용 — 딥 리서치 · 바이브 코딩"}, {"y": "2026", "t": "근거 기반 · 생태계 통합", "d": "NotebookLM → Gemini Notebook, 제미나이와 연동"}], "faces": [{"k": "먼저 써 보는 사람", "d": "교감이 AI로 회의록 초안을 만들고 공문을 정리하는 모습이 교사에게 가장 설득력 있는 연수가 됩니다.", "icon": "art/noti_laptop.png"}, {"k": "기준을 세우는 사람", "d": "무엇을 AI에 올려도 되고 무엇은 안 되는지를 실무 언어로 정리하는 일은 교감의 몫입니다.", "icon": "art/noti_shield.png"}, {"k": "연결하는 사람", "d": "교사 개개인의 AI 활용 경험을 학교의 공유 자산으로 묶어 내는 허브 역할입니다.", "icon": "art/noti_thumbs.png"}]}</script>
+<script>
+const C=JSON.parse(document.getElementById('course').textContent);
+const PADLET_URL="__PADLET__";
+const FILE_BASE=C.site+'files/';
+const COLORS=['#1f4e8c','#2a6cb5','#159a8c','#e8b44c','#d9822b','#7a5cc7','#2b8fd6','#e5484d'];
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const stepById=Object.fromEntries(C.steps.map(s=>[s.id,s]));
+const partById=Object.fromEntries(C.parts.map(p=>[p.id,p]));
+let done={};try{done=JSON.parse(localStorage.getItem('ld1029-done')||'{}')}catch(e){done={}}
+const saveDone=()=>{try{localStorage.setItem('ld1029-done',JSON.stringify(done))}catch(e){}};
+let checks={};try{checks=JSON.parse(localStorage.getItem('ld1029-checks')||'{}')}catch(e){checks={}}
+
+function fileUrl(k){return FILE_BASE+encodeURIComponent(C.files[k].name)}
+function renderNav(){
+  let h='';
+  C.parts.forEach(p=>{
+    h+=`<div class="partlab">PART ${p.num} · ${esc(p.title)}</div>`;
+    p.steps.forEach(id=>{const s=stepById[id];
+      h+=`<a class="stepnav${done[id]?' done':''}" href="#${id}" data-view="${id}"><span class="t">${s.num}. ${esc(s.short)}</span><span class="n">✓</span></a>`;});
+  });
+  $('#stepNav').innerHTML=h;
+  const n=Object.keys(done).filter(k=>done[k]).length;
+  $('#progText').textContent=`완료 ${n} / ${C.steps.length}단계`;
+  $('#progBar').style.width=(n/C.steps.length*100)+'%';
+}
+function shot(c,cls=''){
+  const mk=(c.marks||[]).map(m=>`<span class="mk ${m[5]==='green'?'green':''}" style="left:${m[0]/c.w*100}%;top:${m[1]/c.h*100}%;width:${m[2]/c.w*100}%;height:${m[3]/c.h*100}%"><b>${m[4]}</b></span>`).join('');
+  return `<div class="shot ${cls}" data-zoom="${esc(c.img)}" role="button" tabindex="0" aria-label="${esc(c.title)} 크게 보기"><img src="${esc(c.img)}" alt="${esc(c.title)}" loading="lazy">${mk}</div>`;
+}
+const PBY={};C.steps.forEach(s=>s.prompts.forEach(p=>PBY[p.id]=p));
+function pin(pid,cls=''){const p=PBY[pid];if(!p)return '';
+  return `<details class="pin ${cls}"><summary><span class="pid">${p.id}</span>${cls.includes('mini')?'📋 프롬프트':'📋 붙여 넣을 프롬프트'}</summary>${p.settings&&p.settings.length?`<div class="pset">설정: ${esc(p.settings.join(' · '))}</div>`:''}<pre class="ptext">${esc(p.text)}</pre><div class="pfoot"><button class="copy" data-copy="${p.id}">복사하기</button></div></details>`;}
+function capCard(c){
+  const colorOf=n=>{const m=(c.marks||[]).find(x=>x[4]===n);return m&&m[5]==='green'?'green':''};
+  const at=n=>(c.pr||[]).filter(x=>x[0]===n).map(x=>pin(x[1])).join('');
+  const li=(c.steps||[]).map((t,i)=>`<li class="${colorOf(i+1)}"><b>${i+1}</b><span>${esc(t)}</span>${at(i+1)}</li>`).join('');
+  const solo=(c.pr||[]).filter(x=>x[0]===0).map(x=>pin(x[1],'solo')).join('');
+  return `<div class="cap">${shot(c)}<div class="capinfo"><h3>${esc(c.title)}</h3>${li?`<ol>${li}</ol>`:''}${solo}</div></div>`;
+}
+function promptCard(p){
+  const set=(p.settings||[]).map(x=>`<span class="chip">${esc(x)}</span>`).join('');
+  return `<article class="prompt" id="${p.id}"><div class="phead"><span class="pid">${p.id}</span><h3>${esc(p.title)}</h3><span class="chip sun">${esc(p.tool)}</span></div>
+  <div class="pwhere">붙여 넣을 곳 · <b>${esc(p.where)}</b></div>${set?`<div class="chips">${set}</div>`:''}
+  <pre class="ptext">${esc(p.text)}</pre>
+  <div class="pfoot"><span></span><button class="copy" data-copy="${p.id}">복사하기</button></div></article>`;
+}
+function fileChip(k){const f=C.files[k];const kk=f.kind.toLowerCase();
+  return `<a class="file" href="${fileUrl(k)}" target="_blank" rel="noopener" download><span class="k ${kk}">${f.kind}</span><span><b>${esc(f.label)}</b><small>${esc(f.use)} · ${f.size}</small></span></a>`;}
+
+function liveBox(list){
+  if(!list||!list.length) return '';
+  return `<section class="sec"><div class="livebox"><div class="lh"><b>Gemini Notebook에서 바로 보기</b><span>누르면 실제 결과물이 새 탭에서 열려요 · 구글 로그인 후 보기 전용</span></div><div class="live">${list.map(l=>`<a class="lv" href="${esc(l.u)}" target="_blank" rel="noopener">${l.i} ${esc(l.t)} ↗</a>`).join('')}</div></div></section>`;
+}
+function trendCards(){
+  return `<div class="trend">${C.trend.map((t,k)=>`<article class="tr"><img src="${t.icon}" alt="" loading="lazy"><div><span class="trn">키워드 ${k+1}</span><h3>${esc(t.k)} <small>${esc(t.en)}</small></h3><p><b>무엇이 달라졌나</b>${esc(t.what)}</p><p><b>학교 운영에 주는 의미</b>${esc(t.mean)}</p></div></article>`).join('')}</div>`;
+}
+function timelineBar(){
+  return `<ol class="tline">${C.timeline.map(t=>`<li><span class="ty">${esc(t.y)}</span><b>${esc(t.t)}</b><span>${esc(t.d)}</span></li>`).join('')}</ol>`;
+}
+function facesCards(){
+  return `<div class="faces">${C.faces.map((f,k)=>`<article class="face"><img src="${f.icon}" alt="" loading="lazy"><span class="fn">얼굴 ${k+1}</span><b>${esc(f.k)}</b><p>${esc(f.d)}</p></article>`).join('')}</div>`;
+}
+function viewHome(){
+  const parts=C.parts.map(p=>`<article class="part"><div class="pic"><img src="${p.art}" alt="${esc(p.title)} 그림" loading="lazy"></div><div class="body"><span class="num">PART ${p.num}</span><h3>${esc(p.title)}</h3><ol>${p.steps.map(id=>{const s=stepById[id];return `<li><a href="#${id}"><b>${s.num}.</b><span>${esc(s.short)}</span></a></li>`}).join('')}</ol></div></article>`).join('');
+  return `<section class="hero"><img src="art/cover.webp" alt="교감 선생님들과 마스코트 노티가 빛나는 공책 위로 떠오른 문서와 인포그래픽을 함께 보는 그림"><div class="shade"></div>
+   <div class="hcopy"><span class="tag">${esc(C.meta.target)} · ${C.meta.date} ${C.meta.time}</span><h1>AI·SW 트렌드로 읽는<br><em>디지털 리더십</em></h1>
+   <p>${esc(C.meta.subtitle)}</p><p class="who">${esc(C.meta.lecturer)} · ${esc(C.meta.place)}</p>
+   <div class="btns"><a class="btn" href="#s0">STEP 0부터 따라 하기</a><a class="btn ghost" href="#files">실습 자료 받기</a>${PADLET_URL.startsWith("http")?`<a class="btn ghost" href="${PADLET_URL}" target="_blank" rel="noopener">연수 패들렛 ↗</a>`:""}</div></div></section>
+  <section class="sec"><div class="parts">${parts}</div></section>
+  <section class="sec"><div class="sechead"><h2>2026년, 교감이 읽어 둘 세 가지 트렌드</h2><p>기능이 아니라 방향을 읽는 눈</p></div>${trendCards()}${timelineBar()}</section>
+  <section class="sec"><div class="sechead"><h2>실제로 만든 노트북 열어 보기</h2><p>구글 로그인 후 보기 전용</p></div>
+   <div class="nbs two">${['hr','trend'].map(k=>`<a class="nb" href="${esc(C.notebooks[k].u)}" target="_blank" rel="noopener"><b>📒 ${esc(C.notebooks[k].t)}</b><span>${esc(C.notebooks[k].d)}</span><em>열기 ↗</em></a>`).join('')}</div></section>
+  <section class="sec"><div class="sechead"><h2>Gemini Notebook은 세 칸만 알면 됩니다</h2><p>2026년 7월 NotebookLM에서 이름이 바뀌었어요</p></div>
+   <div class="panels"><div class="panel"><span class="where">왼쪽</span><b>출처</b><p>복무 규정 · 인사 매뉴얼 · 교육청 지침 · 회의 녹음. 이 안에서만 답합니다. 부족하면 딥 리서치로 웹에서 찾아 추가.</p></div>
+   <div class="panel"><span class="where">가운데</span><b>채팅</b><p>“특별휴가 일수는?”처럼 자연어로 묻고, 답 속 숫자를 눌러 원문을 바로 확인합니다.</p></div>
+   <div class="panel"><span class="where">오른쪽</span><b>스튜디오</b><p>교직원 회의용 인포그래픽 · 전달 연수 슬라이드 · 출퇴근길 오디오를 클릭 한 번으로.</p></div></div>
+   ${capCard({img:'cap/a02_sources.jpg',w:1568,h:751,title:'실제 화면 — 출처 · 채팅 · 스튜디오',marks:[[10,56,388,690,1,'red'],[410,56,736,690,2,'red'],[1154,56,388,690,3,'red']],steps:['출처: 인사 규정 PDF 3종','채팅: 자동 요약(소스 가이드)과 추천 질문','스튜디오: 결과물 타일']})}
+  </section>
+  <section class="sec"><div class="sechead"><h2>교감 디지털 리더십의 세 얼굴</h2></div>${facesCards()}</section>`;
+}
+function viewStep(s){
+  const p=partById[s.part];const i=C.steps.indexOf(s);const prev=C.steps[i-1],next=C.steps[i+1];
+  let h=`<header class="stephead"><div class="l"><div class="snum"><b>STEP ${s.num}</b><span>PART ${p.num} · ${esc(p.title)}</span></div>
+   <h1>${esc(s.title)}</h1>${s.prompts.length?`<div class="chips"><span class="chip">프롬프트 ${s.prompts.length}개</span></div>`:''}</div>
+   <div class="r"><img class="art" src="${p.art}" alt="" loading="lazy"><img class="ico" src="${s.icon}" alt=""></div></header>${liveBox(s.live)}`;
+  if(s.files&&s.files.length) h+=`<section class="sec"><div class="sechead"><h2>준비 자료</h2></div><div class="files">${s.files.map(fileChip).join('')}</div>${s.id==='s0'?`<div class="btns"><a class="btn" href="${FILE_BASE+encodeURIComponent(C.zip)}" target="_blank" rel="noopener" download>📦 실습 자료 한꺼번에 받기 (ZIP)</a><a class="btn line" href="${FILE_BASE+encodeURIComponent(C.card)}" target="_blank" rel="noopener" download>🧾 프롬프트 카드 PDF</a></div>`:''}</section>`;
+  if(s.trend) h+=`<section class="sec"><div class="sechead"><h2>세 가지 키워드</h2><p>생성에서 근거로, 사용에서 제작으로</p></div>${trendCards()}${timelineBar()}</section>`;
+  if(s.todo) h+=`<section class="sec"><div class="sechead"><h2>이렇게 따라 해요</h2></div><ol class="todo">${s.todo.map(t=>`<li>${esc(t)}</li>`).join('')}</ol></section>`;
+  if(s.scenarios) h+=`<section class="sec"><div class="sechead"><h2>교감 업무로 넓히기</h2><p>원고의 세 가지 시나리오</p></div><div class="scen">${s.scenarios.map(c=>`<article class="sc"><img src="${c.icon}" alt="" loading="lazy"><span class="sck">${esc(c.k)}</span><b>${esc(c.t)}</b><p>${esc(c.d)}</p><div class="scp">${c.p.map(pid=>pin(pid,'mini')).join('')}</div></article>`).join('')}</div></section>`;
+  if(s.flow) h+=`<section class="sec"><div class="sechead"><h2>이렇게 만들어요</h2><p>닭핑(명진초 학급 캐릭터) 예시</p></div><div class="flow">${s.flow.map((f,k)=>`<div class="fl"><div class="pic${f.img.startsWith('nlm/')?' cover':''}" data-zoom="${esc(f.img)}" role="button" tabindex="0"><img src="${esc(f.img)}" alt="${esc(f.t)}" loading="lazy"></div><div class="b"><i>${k+1}</i><b>${esc(f.t)}</b><span>${esc(f.d)}</span>${f.dl?`<a class="btn small line" style="justify-self:start" href="${fileUrl(f.dl)}" target="_blank" rel="noopener" download>⬇ ${esc(C.files[f.dl].kind)} 받기</a>`:''}${f.p?pin(f.p,'mini'):''}</div></div>`).join('')}</div></section>`;
+  if(s.formula) h+=`<section class="sec"><div class="sechead"><h2>3단계 질문 공식</h2></div><div class="formula">${s.formula.map((f,k)=>`<div class="fx" style="--c:${['#e5484d','#2b8fd6','#2fae86'][k]}"><b>${esc(f.k)}</b><span>${esc(f.d)}</span><em>예) ${esc(f.e)}</em></div>`).join('')}</div></section>`;
+  if(s.caps&&s.caps.length) h+=`<section class="sec"><div class="sechead"><h2>실제 화면으로 보기</h2><p>누르면 크게 보여요</p></div><div class="caps">${s.caps.map(capCard).join('')}</div></section>`;
+  if(s.prompts.length) h+=`<section class="sec"><div class="sechead"><h2>복사해서 쓰는 프롬프트</h2></div><div class="prompts">${s.prompts.map(promptCard).join('')}</div></section>`;
+  if(s.results) h+=`<section class="sec"><div class="sechead"><h2>결과 예시</h2><p>누르면 크게 보여요</p></div><div class="results${s.id==='s5'?'':(s.id==='s4'?' info2':' wide')}">${s.results.map((r,k)=>`<figure class="res" data-zoom="${r}" role="button" tabindex="0" style="margin:0"><img src="${r}" alt="결과물 ${k+1}" loading="lazy"></figure>`).join('')}</div></section>`;
+  if(s.review){const rv=s.review;h+=`<section class="sec"><div class="sechead"><h2>${esc(rv.title)}</h2></div><div class="review"><p>${esc(rv.d)}</p><ul>${rv.items.map(([a,b])=>`<li><s>${esc(a)}</s><span>→</span><b>${esc(b)}</b></li>`).join('')}</ul></div></section>`;}
+  if(s.cutter){const c=s.cutter;h+=`<section class="sec"><div class="sechead"><h2>더 해 보기</h2></div><div class="cutter"><img src="${esc(c.img)}" alt="닭핑 9포즈" loading="lazy"><div><b>${esc(c.t)}</b><p>${esc(c.d)}</p><a class="btn small" href="${esc(c.url)}" target="_blank" rel="noopener">포즈 시트 가위 열기 ↗</a></div></div></section>`;}
+  if(s.science){const sc=s.science;h+=`<section class="sec"><div class="sechead"><h2>${esc(sc.title)}</h2></div><div class="caps">${capCard(sc.caps[0])}</div><div class="results wide">${sc.results.map(r=>`<figure class="res" data-zoom="${r}" role="button" tabindex="0" style="margin:0"><img src="${r}" alt="과학 인포그래픽" loading="lazy"><figcaption>프롬프트 P15 · 스케치 노트 스타일</figcaption></figure>`).join('')}</div>${pin('P15')}</section>`;}
+  if(s.checks) h+=`<section class="sec"><div class="sechead"><h2>학교 AI 활용 가이드라인 7항목</h2><p>눌러서 우리 학교 점검 표시</p></div><div class="checks">${s.checks.map((c,k)=>`<button class="check${checks[k]?' on':''}" data-check="${k}"><span class="box">${checks[k]?'✓':''}</span><span><b>${esc(c.k)}</b><span>${esc(c.d)}</span></span></button>`).join('')}</div></section>`;
+  if(s.faces) h+=`<section class="sec"><div class="sechead"><h2>교감 디지털 리더십의 세 얼굴</h2></div>${facesCards()}</section>`;
+  if(s.discuss) h+=`<section class="sec"><div class="discuss"><span class="dl">토의 주제</span><p>${esc(s.discuss)}</p><div class="btns"><a class="btn small" href="${PADLET_URL}" target="_blank" rel="noopener">패들렛 STEP 7에 올리기 ↗</a></div></div></section>`;
+  if(s.tips||s.challenge) h+=`<section class="sec"><div class="tips">${(s.tips||[]).map(t=>`<div class="tip"><b>TIP</b><span>${esc(t)}</span></div>`).join('')}</div>${s.challenge?`<div class="challenge"><img src="art/noti_telescope.png" alt=""><div><b>더 해 보기</b><p>${esc(s.challenge)}</p></div></div>`:''}</section>`;
+  if(s.refs) h+=`<section class="sec"><div class="sechead"><h2>참고문헌</h2></div><ul class="refs">${s.refs.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></section>`;
+  h+=`<div class="pager">${prev?`<a href="#${prev.id}"><small>← 이전</small><b>STEP ${prev.num} · ${esc(prev.short)}</b></a>`:`<a href="#home"><small>← 처음</small><b>처음 화면</b></a>`}
+   <button class="donebtn${done[s.id]?' on':''}" data-done="${s.id}">${done[s.id]?'✓ 완료했어요':'이 단계 완료 표시'}</button>
+   ${next?`<a class="next" href="#${next.id}"><small>다음 →</small><b>STEP ${next.num} · ${esc(next.short)}</b></a>`:`<a class="next" href="#gallery"><small>다음 →</small><b>결과물 갤러리</b></a>`}</div>`;
+  return h;
+}
+function viewFiles(){
+  const keys=Object.keys(C.files);
+  return `<section class="sec" style="margin-top:0"><div class="eyebrow">MATERIALS</div><h2>실습 자료 내려받기</h2><p class="intro">인사 규정 PDF 3종은 교육청 배포 자료, 연수 원고는 오늘 연수 교재입니다. 내려받아 Gemini Notebook 소스로 바로 넣을 수 있어요.</p>
+   <div class="btns"><a class="btn" href="${FILE_BASE+encodeURIComponent(C.zip)}" target="_blank" rel="noopener" download>📦 한꺼번에 받기 (ZIP)</a><a class="btn line" href="${FILE_BASE+encodeURIComponent(C.card)}" target="_blank" rel="noopener" download>🧾 프롬프트 카드 PDF (${Object.keys(PBY).length}개)</a></div>
+   <div class="files" style="grid-template-columns:1fr">${keys.map(k=>{const f=C.files[k];return `<a class="file filebig" href="${fileUrl(k)}" target="_blank" rel="noopener" download><span class="k ${f.kind.toLowerCase()}">${f.kind}</span><span><b>${esc(f.label)}</b><small>${esc(f.desc)}<br>쓰는 곳: ${esc(f.use)} · ${f.size}</small></span><span class="dl">받기 ↓</span></a>`}).join('')}</div></section>`;
+}
+let pf='all',pq='';
+function viewPrompts(){
+  const all=[];C.steps.forEach(s=>s.prompts.forEach(p=>all.push({...p,step:s})));
+  const fl=all.filter(p=>(pf==='all'||p.step.id===pf)&&(!pq||(p.title+p.text+p.tool).includes(pq)));
+  const btn=(id,lab)=>`<button class="filter" data-filter="${id}" aria-pressed="${pf===id}">${lab}</button>`;
+  return `<section class="sec" style="margin-top:0"><div class="eyebrow">PROMPTS</div><h2>프롬프트 모음 · ${all.length}개</h2>
+   <div class="search"><input id="pq" type="search" placeholder="찾을 말 (예: 육아휴직, 전보, 인포그래픽)" value="${esc(pq)}" aria-label="프롬프트 검색"></div>
+   <div class="chips">${btn('all','전체')}${C.steps.filter(s=>s.prompts.length).map(s=>btn(s.id,`STEP ${s.num} ${s.short}`)).join('')}</div>
+   <div class="prompts" id="plist">${fl.length?fl.map(p=>promptCard(p).replace('<h3>',`<h3><a href="#${p.step.id}" style="color:inherit;text-decoration:none">STEP ${p.step.num} · </a>`)).join(''):'<p class="empty">찾는 프롬프트가 없어요. 다른 말로 찾아보세요.</p>'}</div></section>`;
+}
+function viewGallery(){
+  return `<section class="sec" style="margin-top:0"><div class="eyebrow">GALLERY</div><h2>결과물 갤러리</h2><p class="intro">인사 규정 PDF 3종과 연수 원고로 실제로 만든 결과물입니다. 링크를 누르면 Gemini Notebook에서 열려요 (구글 로그인 · 보기 전용).</p>
+   <div class="results wide">${C.gallery.map(g=>`<figure class="res" data-zoom="${g.img}" role="button" tabindex="0" style="margin:0"><img src="${g.img}" alt="${esc(g.title)}" loading="lazy"><figcaption><b style="color:var(--text)">${esc(g.title)}</b><br>${esc(g.tool)} · <a href="#${g.step}">STEP ${stepById[g.step].num}</a>${g.url?`<br><a class="go" href="${esc(g.url)}" target="_blank" rel="noopener">${g.url.includes('/artifact/')?'Gemini Notebook에서 보기 ↗':'노트북 열어 직접 물어보기 ↗'}</a>`:''}</figcaption></figure>`).join('')}</div></section>`;
+}
+function route(){
+  let v=(location.hash||'#home').slice(1);
+  if(!(v==='home'||v==='files'||v==='prompts'||v==='gallery'||stepById[v]||/^P\d+$/.test(v))) v='home';
+  let target=null;
+  if(/^P\d+$/.test(v)){const s=C.steps.find(s=>s.prompts.some(p=>p.id===v));target=v;v=s?s.id:'home';}
+  const html=v==='home'?viewHome():v==='files'?viewFiles():v==='prompts'?viewPrompts():v==='gallery'?viewGallery():viewStep(stepById[v]);
+  $('#view').innerHTML=html;
+  document.querySelectorAll('[data-view]').forEach(a=>{if(a.dataset.view===v)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
+  $('#side').classList.remove('open');
+  if(target){const el=document.getElementById(target);if(el)el.scrollIntoView({block:'start'});}else window.scrollTo(0,0);
+  const t={home:'AI·SW 트렌드로 읽는 디지털 리더십',files:'실습 자료',prompts:'프롬프트 모음',gallery:'결과물 갤러리'}[v]||('STEP '+stepById[v].num+' · '+stepById[v].short);
+  document.title=t+' | 디지털 리더십 연수 아카이브';
+}
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),1600)}
+function copyText(txt,btn){
+  const ok=()=>{btn.classList.add('ok');btn.textContent='복사됨 ✓';toast('복사했어요 — 붙여 넣으세요');setTimeout(()=>{btn.classList.remove('ok');btn.textContent='복사하기'},1800)};
+  const fb=()=>{const pre=btn.closest('.prompt, .pin').querySelector('.ptext');const r=document.createRange();r.selectNodeContents(pre);const sel=getSelection();sel.removeAllRanges();sel.addRange(r);toast('글자가 선택됐어요 — Ctrl+C로 복사하세요')};
+  try{navigator.clipboard.writeText(txt).then(ok,fb)}catch(e){fb()}
+}
+function openLB(src){
+  const card=document.querySelector(`[data-zoom="${CSS.escape(src)}"]`);
+  const lb=document.createElement('div');lb.className='lb';lb.setAttribute('role','dialog');
+  const inner=card&&card.classList.contains('shot')?card.outerHTML.replace('class="shot','class="shot big'):`<img src="${src}" alt="">`;
+  lb.innerHTML=`<div class="in">${inner}</div><button class="x">닫기 ✕</button>`;
+  lb.addEventListener('click',e=>{if(e.target===lb||e.target.classList.contains('x'))lb.remove()});
+  document.addEventListener('keydown',function k(e){if(e.key==='Escape'){lb.remove();document.removeEventListener('keydown',k)}});
+  document.body.appendChild(lb);
+}
+document.addEventListener('click',e=>{
+  const c=e.target.closest('[data-copy]');if(c){const all=[];C.steps.forEach(s=>s.prompts.forEach(p=>all.push(p)));const p=all.find(x=>x.id===c.dataset.copy);copyText(p.text,c);return}
+  const z=e.target.closest('[data-zoom]');if(z&&!e.target.closest('.lb')&&!e.target.closest('a')){openLB(z.dataset.zoom);return}
+  const d=e.target.closest('[data-done]');if(d){const id=d.dataset.done;done[id]=!done[id];saveDone();renderNav();d.classList.toggle('on',!!done[id]);d.textContent=done[id]?'✓ 완료했어요':'이 단계 완료 표시';if(done[id])toast('STEP '+stepById[id].num+' 완료!');return}
+  const ck=e.target.closest('[data-check]');if(ck){const k=ck.dataset.check;checks[k]=!checks[k];try{localStorage.setItem('ld1029-checks',JSON.stringify(checks))}catch(_){}ck.classList.toggle('on',!!checks[k]);ck.querySelector('.box').textContent=checks[k]?'✓':'';return}
+  const f=e.target.closest('[data-filter]');if(f){pf=f.dataset.filter;route();return}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'){const z=e.target.closest&&e.target.closest('[data-zoom]');if(z)openLB(z.dataset.zoom)}});
+document.addEventListener('input',e=>{if(e.target.id==='pq'){pq=e.target.value.trim();const pos=e.target.selectionStart;route();const i=$('#pq');i.focus();i.setSelectionRange(pos,pos)}});
+$('#menuBtn').addEventListener('click',()=>$('#side').classList.toggle('open'));
+$('#main').addEventListener('click',()=>$('#side').classList.remove('open'));
+const pl=$('#padletLink');if(PADLET_URL&&!PADLET_URL.startsWith('__')){pl.href=PADLET_URL}else{pl.style.display='none'}
+window.addEventListener('hashchange',route);
+renderNav();route();
+</script>
+
+</body>
+</html>
